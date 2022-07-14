@@ -1,15 +1,5 @@
 ##Generating random temp logger sites
 
-#Load MBeck previous sg analysis change data file
-chgdat
-load("C:/Users/sscol/OneDrive/Desktop/Logger/dem.RData")
-
-#only include OTB segment
-sgbound=st_read('Seagrass_Segment_Boundaries.shp')
-
-#load seagrass management areas
-sgmanagement
-
 # Install and load packages
 library(sf)
 library(tidyverse)
@@ -25,12 +15,17 @@ library(tbeptools)
 # Installing from GitHub requires you first install the remotes package
 install.packages("remotes")
 
-# install the most recent development version from GitHub
+# install the most recent development version of EPA spsurvey from GitHub
 remotes::install_github("USEPA/spsurvey", ref = "main")
 # load the most recent development version from GitHub
 library(spsurvey)
 
+#Load MBeck previous [sg analysis change data file](https://github.com/tbep-tech/seagrass-analysis)
+chgdat
+sgbound=st_read('Seagrass_Segment_Boundaries.shp')
 
+#load seagrass management areas
+sgmanagement
 
 ##Filter boundaries to only include OTB
 filt_dat <- sgbound %>% 
