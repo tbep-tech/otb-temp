@@ -27,28 +27,32 @@ sgbound=st_read('Seagrass_Segment_Boundaries.shp')
 #load seagrass management areas
 sgmanagement
 
+# reproject layers
+prj4 <- '+proj=tmerc +lat_0=24.33333333333333 +lon_0=-82 +k=0.999941177 +x_0=200000.0001016002 +y_0=0 +ellps=GRS80 +to_meter=0.3048006096012192 +no_defs'
+sgmanagement <- sgmanagement %>% 
+  st_transform(crs = prj4)
+sgbound<- sgbound %>% 
+  st_transform(crs = prj4)
+
 ##Filter boundaries to only include OTB
 filt_dat <- sgbound %>% 
   filter(SEAGRASSSE=='OLD TAMPA BAY')
 filt_dat
 
-# reproject layers
-prj4 <- '+proj=tmerc +lat_0=24.33333333333333 +lon_0=-82 +k=0.999941177 +x_0=200000.0001016002 +y_0=0 +ellps=GRS80 +to_meter=0.3048006096012192 +no_defs'
-sgmanagement <- sgmanagement %>% 
-  st_transform(crs = prj4)
-
-# reproject dem, convert to stars 
-demstr <- dem %>% 
-  projectRaster(crs = prj4) %>% 
-  st_as_stars()
+#clip sg change data to only Old Tampa Bay segment
+sg_clip= st_intersection(chgdat,filt_dat)
 
 # colors
 cols <- c('green4', 'tomato1')
 names(cols) <- c('gained', 'lost')
 
-mapview(chgdat, zcol = 'var', layer.name = 'Seagrass', col.regions = cols)+
+chgdat
+
+##Mapping the sampling frame
+mapview(sg_clip, zcol = 'var', layer.name = 'Seagrass', col.regions = cols)+
   mapview(filt_dat, layer.name= 'OTB',col.regions='black', alpha.regions=0)+
   mapview(sgmanagement, layer.name='SG Mngment Areas', color = 'blue', alpha.regions=0)
 
-
-
+##creating list of sites for areas of seagrass loss
+##subscript out of bounds error! Gahh..
+loss=grts(sg_clip,50, stratum_var = 'var', seltype = 'equal',DesignID = 'Loss',maxtry=10)
