@@ -10,6 +10,13 @@ library(stars)
 library(raster)
 library(here)
 library(spatstat)
+
+options(repos = c(
+  tbeptech = 'https://tbep-tech.r-universe.dev',
+  CRAN = 'https://cloud.r-project.org'))
+
+# install tbeptools
+install.packages('tbeptools')
 library(tbeptools)
 
 # Installing from GitHub requires you first install the remotes package
@@ -42,11 +49,9 @@ filt_dat
 #clip sg change data to only Old Tampa Bay segment
 sg_clip= st_intersection(chgdat,filt_dat)
 
-# colors
+## colors
 cols <- c('green4', 'tomato1')
 names(cols) <- c('gained', 'lost')
-
-chgdat
 
 ##Mapping the sampling frame
 mapview(sg_clip, zcol = 'var', layer.name = 'Seagrass', col.regions = cols)+
@@ -54,5 +59,10 @@ mapview(sg_clip, zcol = 'var', layer.name = 'Seagrass', col.regions = cols)+
   mapview(sgmanagement, layer.name='SG Mngment Areas', color = 'blue', alpha.regions=0)
 
 ##creating list of sites for areas of seagrass loss
-##subscript out of bounds error! Gahh..
-loss=grts(sg_clip,50, stratum_var = 'var', seltype = 'equal',DesignID = 'Loss',maxtry=10)
+
+loss_n=c(lost=50,gained=0)
+uneqprob=grts(sg_clip,n_base=50, caty_var = 'var', caty_n = loss_n )
+sp_plot(uneqprob)
+
+gain_n=c(lost=0, gained=50)
+uneqprob_gain=grts(sg_clip,n_base=50, caty_var = 'var', caty_n = gain_n )
