@@ -54,13 +54,20 @@ sg_clip= st_intersection(chgdat,filt_dat)
 cols <- c('green4', 'tomato1')
 names(cols) <- c('gained', 'lost')
 
-##Mapping the sampling frame
-mapview(sg_clip, zcol = 'var', layer.name = 'Seagrass', col.regions = cols)+
-  mapview(filt_dat, layer.name= 'OTB',col.regions='black', alpha.regions=0)+
-  mapview(sgmanagement, layer.name='SG Mngment Areas', color = 'blue', alpha.regions=0)
-
-##Select a sample stratified by seagrass change area
+##Select a sample stratified by seagrass change area (https://cran.r-project.org/web/packages/spsurvey/vignettes/sampling.html#3_Stratified_sampling)
 stata_n<- c(gained = 3, lost=3)
-strata_eqprob<- grts(chgdat,n_base = stata_n, stratum_var = "var")
+strata_eqprob<- grts(sg_clip,n_base = stata_n, stratum_var = "var")
 sp_plot(strata_eqprob)
 
+#transform list of sites into a dataframe and project to prj4 for consistency
+sites<- as.data.frame(strata_eqprob$sites_base)
+write.csv(sites, "C:\\Users\\sscol\\OneDrive\\Desktop\\Logger\\otb-temp\\data\\sites.csv")
+
+sites_geo<-st_as_sf(sites,coords = c("lon_WGS84","lat_WGS84"), crs=4326)
+sites_geo<- sites_geo %>% st_transform(crs = prj4)
+
+
+#Generate a map selected sites
+mapview(sg_clip, zcol = 'var', layer.name = 'Seagrass', col.regions = cols)+
+  mapview(filt_dat, layer.name= 'OTB',col.regions='black', alpha.regions=0)+
+  mapview(sites_geo, layer.name='statum', color = 'blue', alpha.regions=0)
