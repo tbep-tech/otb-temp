@@ -1,0 +1,60 @@
+---
+title: "OTB 2022 temperature logger deployments"
+author: 
+   - name: Marcus Beck, <mbeck@tbep.org>, Sheila Scolaro, <sscolaro@tbep.org>
+institute: "Tampa Bay Estuary Program"
+date: "08/02/2022"
+format:
+  html:
+    theme: cosmo
+    css: styles.css
+    code-tools: 
+      source: https://github.com/tbep-tech/otb-temp/docs/tempeval.qmd
+execute:
+  echo: false
+  warning: false
+filters:
+  - lightbox
+  
+lightbox: auto
+---
+
+```{r}
+#| include: false
+library(knitr)
+library(here)
+library(tidyverse)
+library(plotly)
+library(mapview)
+
+load(file = here('data/metadat.RData'))
+load(file = here('data/tempdat.RData'))
+```
+
+```{r}
+toplo <- tempdat %>% 
+  mutate(
+    logger = as.numeric(logger)
+  )
+
+p <- ggplot(tempdat, aes(x = datetime, y = tempc, color = logger)) + 
+  geom_line() + 
+  theme_minimal() + 
+  scale_color_viridis_d() +
+  theme(
+    panel.grid.minor = element_blank(), 
+    legend.position  = 'top'
+  ) +
+  labs(
+    y = 'Temp (C)',
+    x = NULL, 
+    color = 'Logger'
+  )
+ggplotly(p)
+```
+
+```{r}
+mapview(metadat, zcol = 'logger', layer.name = 'Logger')
+```
+
+
