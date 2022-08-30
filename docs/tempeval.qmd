@@ -3,7 +3,7 @@ title: "OTB 2022 temperature logger deployments"
 author: 
    - name: Marcus Beck, <mbeck@tbep.org>, Sheila Scolaro, <sscolaro@tbep.org>
 institute: "Tampa Bay Estuary Program"
-date: "08/02/2022"
+date: "`r Sys.Date()`"
 format:
   html:
     theme: cosmo
