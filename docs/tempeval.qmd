@@ -9,7 +9,7 @@ format:
     theme: cosmo
     css: styles.css
     code-tools: 
-      source: https://github.com/tbep-tech/otb-temp/docs/tempeval.qmd
+      source: https://github.com/tbep-tech/otb-temp/blob/main/docs/tempeval.qmd
 execute:
   echo: false
   warning: false
