@@ -31,6 +31,7 @@ library(spsurvey)
 #Load MBeck previous [sg analysis change data file](https://github.com/tbep-tech/seagrass-analysis) and Bay segment boundaries
 chgdat
 
+
 #load seagrass management areas and Tampa Bay Segments
 sgmanagement
 tbseg
@@ -50,6 +51,7 @@ filt_dat
 #clip sg change data to only Old Tampa Bay segment
 sg_clip= st_intersection(chgdat,filt_dat)
 
+st_write(sg_clip, "OTBchgdat.shp")
 ## colors
 cols <- c('green4', 'tomato1')
 names(cols) <- c('gained', 'lost')
@@ -61,7 +63,7 @@ sp_plot(strata_eqprob)
 
 #transform list of sites into a dataframe and project to prj4 for consistency
 sites<- as.data.frame(strata_eqprob$sites_base)
-write.csv(sites, "C:\\Users\\sscol\\OneDrive\\Desktop\\Logger\\otb-temp\\data\\sites.csv")
+write.csv(sites, "C:\\Users\\sscol\\OneDrive\\Desktop\\Logger\\otb-temp\\data\\sites_20220922.csv")
 
 sites_geo<-st_as_sf(sites,coords = c("lon_WGS84","lat_WGS84"), crs=4326)
 sites_geo<- sites_geo %>% st_transform(crs = prj4)
