@@ -24,6 +24,7 @@ metadat <- fls %>%
   pull(id) %>% 
   read_sheet(na = c('none', 'NA'), col_types = 'ttnccnnnccccccc') %>% 
   clean_names %>% 
+  filter(site_id %in% c(1:6)) %>% 
   select(
     logger = logger_id,
     stratum, 
@@ -43,7 +44,7 @@ save(metadat, file = here('data/metadat.RData'))
 # temp data -----------------------------------------------------------------------------------
 
 datfls <- fls %>% 
-  .[!grepl('OTB_TEMP_LOGGER_DATA', .$name),] 
+  .[!grepl('OTB_TEMP_LOGGER_DATA|DATASHEETS', .$name),] 
 
 tempdat <- NULL
 for(i in 1:nrow(datfls)){
@@ -58,8 +59,10 @@ for(i in 1:nrow(datfls)){
   
   out <- read_sheet(id) %>% 
     mutate(
-      logger = logger
-    )
+      logger = logger, 
+      elapsed = `Date-Time (EDT)` - min(`Date-Time (EDT)`)
+    ) %>% 
+    filter(elapsed > 3600)
   
   tempdat <- bind_rows(tempdat, out)
   
