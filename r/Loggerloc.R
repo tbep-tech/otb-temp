@@ -40,7 +40,7 @@ tbseg
 Loss_cols <- c('green4', 'tomato1')
 names(cols) <- c('gained', 'lost')
 
-cols <- c('green4', 'tomato1')
+cols <- c('green', 'green4')
 names(cols) <- c('9113', '9116')
 
 # reproject layers
@@ -81,7 +81,7 @@ stata_n<- c(lost=4)
 strata_eqprob<- grts(sg_clip,n_base = stata_n, stratum_var = "var")
 sp_plot(strata_eqprob)
 
-stata_n_sg<- c("9116"=4)
+stata_n_sg<- c("9113"=4)
 strata_eqprob_sg<- grts(sg22_clip,n_base = stata_n_sg, stratum_var = "FLUCCSCODE")
 sp_plot(strata_eqprob_sg)
 
@@ -93,11 +93,17 @@ sg_sites<- as.data.frame(strata_eqprob_sg$sites_base)
 write.csv(sg_sites, "C:\\Users\\sscol\\OneDrive\\Desktop\\Logger\\otb-temp\\data\\sg_sites_2023.csv")
 
 
-Loss_sites_geo<-st_as_sf(sites,coords = c("lon_WGS84","lat_WGS84"), crs=4326)
-Loss_sites_geo<- sites_geo %>% st_transform(crs = prj4)
+Loss_sites_geo<-st_as_sf(Loss_sites,coords = c("lon_WGS84","lat_WGS84"), crs=4326)
+Loss_sites_geo<-Loss_sites_geo %>% st_transform(crs = prj4)
 
+sg_sites_geo<-st_as_sf(sg_sites,coords = c("lon_WGS84","lat_WGS84"), crs=4326)
+sg_sites_geo<-sg_sites_geo %>% st_transform(crs = prj4)
 
 #Generate a map selected sites
 mapview(sg_clip, zcol = 'var', layer.name = 'Seagrass', col.regions = cols)+
-  mapview(dem, layer.name = 'Depth (m)')+
-  mapview(Loss_sites_geo, layer.name='statum', color = 'yellow', alpha.regions=0)
+  mapview(Loss_sites_geo, layer.name='loss', color = 'yellow', alpha.regions=0)+
+  mapview(sg_sites_geo, layer.name='SG', color = 'blue', alpha.regions=0)
+
+mapview(sg22_clip, zcol = 'FLUCCSCODE', col.regions = cols)+
+  mapview(Loss_sites_geo, layer.name='loss', color = 'yellow', alpha.regions=0)+
+  mapview(sg_sites_geo, layer.name='SG', color = 'blue', alpha.regions=0)
