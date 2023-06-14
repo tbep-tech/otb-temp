@@ -37,8 +37,11 @@ sgmanagement
 tbseg
 
 ## colors
-cols <- c('green4', 'tomato1')
+Loss_cols <- c('green4', 'tomato1')
 names(cols) <- c('gained', 'lost')
+
+cols <- c('green4', 'tomato1')
+names(cols) <- c('9113', '9116')
 
 # reproject layers
 prj4 <- '+proj=tmerc +lat_0=24.33333333333333 +lon_0=-82 +k=0.999941177 +x_0=200000.0001016002 +y_0=0 +ellps=GRS80 +to_meter=0.3048006096012192 +no_defs'
@@ -48,6 +51,8 @@ tbseg<- tbseg %>%
   st_transform(crs = prj4)
 chgdat20202022 <- chgdat20202022 %>% 
   st_transform(crs = prj4)
+sgdat2022 <- sgdat2022%>% 
+  st_transform(crs = prj4)
 
 ##Filter boundaries to only include OTB
 filt_dat <- tbseg %>% 
@@ -56,9 +61,13 @@ filt_dat
 
 #clip sg change data to only Old Tampa Bay segment
 sg_clip= st_intersection(chgdat20202022,filt_dat)
+sg22_clip= st_intersection(sgdat2022,filt_dat)
 
-mapview(sg_clip, zcol = 'var', layer.name = 'Seagrass', col.regions = cols)
+mapview(sg_clip, zcol = 'var', layer.name = 'Seagrass', col.regions = Loss_cols)
 st_write(sg_clip, "OTBchgdat20202022.shp")
+
+mapview(sg22_clip, zcol = 'FLUCCSCODE', col.regions = cols)
+st_write(sg22_clip, "OTBsg22.shp")
 
 ###Load bathy file, filter out all depths >2
 load(file = 'data/dem (1).RData')
@@ -72,9 +81,17 @@ stata_n<- c(lost=4)
 strata_eqprob<- grts(sg_clip,n_base = stata_n, stratum_var = "var")
 sp_plot(strata_eqprob)
 
+stata_n_sg<- c("9116"=4)
+strata_eqprob_sg<- grts(sg22_clip,n_base = stata_n_sg, stratum_var = "FLUCCSCODE")
+sp_plot(strata_eqprob_sg)
+
+
 #transform list of sites into a dataframe and project to prj4 for consistency
 Loss_sites<- as.data.frame(strata_eqprob$sites_base)
-write.csv(sites, "C:\\Users\\sscol\\OneDrive\\Desktop\\Logger\\otb-temp\\data\\Loss_sites_2023.csv")
+write.csv(Loss_sites, "C:\\Users\\sscol\\OneDrive\\Desktop\\Logger\\otb-temp\\data\\loss_sites_2023.csv")
+sg_sites<- as.data.frame(strata_eqprob_sg$sites_base)
+write.csv(sg_sites, "C:\\Users\\sscol\\OneDrive\\Desktop\\Logger\\otb-temp\\data\\sg_sites_2023.csv")
+
 
 Loss_sites_geo<-st_as_sf(sites,coords = c("lon_WGS84","lat_WGS84"), crs=4326)
 Loss_sites_geo<- sites_geo %>% st_transform(crs = prj4)
