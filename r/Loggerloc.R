@@ -62,6 +62,7 @@ filt_dat
 #clip sg change data to only Old Tampa Bay segment
 sg_clip= st_intersection(chgdat20202022,filt_dat)
 sg22_clip= st_intersection(sgdat2022,filt_dat)
+sg22_clip
 
 mapview(sg_clip, zcol = 'var', layer.name = 'Seagrass', col.regions = Loss_cols)
 st_write(sg_clip, "OTBchgdat20202022.shp")
@@ -81,8 +82,8 @@ stata_n<- c(lost=4)
 strata_eqprob<- grts(sg_clip,n_base = stata_n, stratum_var = "var")
 sp_plot(strata_eqprob)
 
-stata_n_sg<- c("9113"=4)
-strata_eqprob_sg<- grts(sg22_clip,n_base = stata_n_sg, stratum_var = "FLUCCSCODE")
+stata_n_sg<- c(FLUCCSCODE=6)
+strata_eqprob_sg<- grts(sg22_clip,n_base = stata_n_sg)
 sp_plot(strata_eqprob_sg)
 
 
