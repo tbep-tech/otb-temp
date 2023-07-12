@@ -89,9 +89,9 @@ sp_plot(strata_eqprob_sg)
 
 #transform list of sites into a dataframe and project to prj4 for consistency
 Loss_sites<- as.data.frame(strata_eqprob$sites_base)
-write.csv(Loss_sites, "C:\\Users\\sscol\\OneDrive\\Desktop\\Logger\\otb-temp\\data\\loss_sites_2023.csv")
+write.csv(Loss_sites, "C:\\Users\\sscol\\OneDrive\\Desktop\\Logger\\otb-temp\\data\\loss_sites_2023-2.csv")
 sg_sites<- as.data.frame(strata_eqprob_sg$sites_base)
-write.csv(sg_sites, "C:\\Users\\sscol\\OneDrive\\Desktop\\Logger\\otb-temp\\data\\sg_sites_2023.csv")
+write.csv(sg_sites, "C:\\Users\\sscol\\OneDrive\\Desktop\\Logger\\otb-temp\\data\\sg_sites_2023-2.csv")
 
 
 Loss_sites_geo<-st_as_sf(Loss_sites,coords = c("lon_WGS84","lat_WGS84"), crs=4326)
@@ -106,5 +106,5 @@ mapview(sg_clip, zcol = 'var', layer.name = 'Seagrass', col.regions = cols)+
   mapview(sg_sites_geo, layer.name='SG', color = 'blue', alpha.regions=0)
 
 mapview(sg22_clip, zcol = 'FLUCCSCODE', col.regions = cols)+
-  mapview(Loss_sites_geo, layer.name='loss', color = 'yellow', alpha.regions=0)+
+  mapview(Loss_sites_geo, layer.name='loss', color = 'red', alpha.regions=0)+
   mapview(sg_sites_geo, layer.name='SG', color = 'blue', alpha.regions=0)
