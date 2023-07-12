@@ -1,5 +1,5 @@
 ---
-title: "OTB 2022 temperature logger deployments"
+title: "OTB temperature logger deployments"
 author: 
    - name: Marcus Beck, <mbeck@tbep.org>, Sheila Scolaro, <sscolaro@tbep.org>
 institute: "Tampa Bay Estuary Program"
@@ -31,13 +31,14 @@ load(file = here('data/metadat.RData'))
 load(file = here('data/tempdat.RData'))
 ```
 
-```{r}
-toplo <- tempdat %>% 
-  mutate(
-    logger = as.numeric(logger)
-  )
+::: {.panel-tabset}
 
-p <- ggplot(tempdat, aes(x = datetime, y = tempc, color = logger)) + 
+## 2022
+
+```{r}
+p <- tempdat %>% 
+  filter(yr == 2022) %>% 
+  ggplot(aes(x = datetime, y = tempc, color = site)) + 
   geom_line() + 
   theme_minimal() + 
   scale_color_viridis_d() +
@@ -48,13 +49,42 @@ p <- ggplot(tempdat, aes(x = datetime, y = tempc, color = logger)) +
   labs(
     y = 'Temp (C)',
     x = NULL, 
-    color = 'Logger'
+    color = 'Site'
   )
 ggplotly(p)
 ```
 
 ```{r}
-mapview(metadat, zcol = 'logger', layer.name = 'Logger')
+metadat %>% 
+  filter(yr == 2022) %>% 
+  mapview(zcol = 'site', layer.name = 'Site')
 ```
 
+## 2023
 
+```{r}
+p <- tempdat %>% 
+  filter(yr == 2023) %>% 
+  ggplot(aes(x = datetime, y = tempc, color = site)) + 
+  geom_line() + 
+  theme_minimal() + 
+  scale_color_viridis_d() +
+  theme(
+    panel.grid.minor = element_blank(), 
+    legend.position  = 'top'
+  ) +
+  labs(
+    y = 'Temp (C)',
+    x = NULL, 
+    color = 'Site'
+  )
+ggplotly(p)
+```
+
+```{r}
+metadat %>% 
+  filter(yr == 2023) %>% 
+  mapview(zcol = 'site', layer.name = 'Site')
+```
+
+:::
