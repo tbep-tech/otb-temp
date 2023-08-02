@@ -30,20 +30,14 @@ metadat <- fls %>%
     stratum, 
     lat, 
     long, 
-    depthm = depth_m, 
-    seagrass_percent, 
-    seagrass_species, 
-    macro_percent, 
-    macro_species
-  ) %>% 
+    depthm = depth_m
+  ) %>%
+  filter(!is.na(logger)) %>% 
   mutate(
     yr = year(deploy_date), 
     logger = sprintf('%04d', logger)
-  ) %>% 
-  filter(
-    (yr == 2022 & site %in% c(1, 2, 4, 5, 6)) |
-    yr == 2023
-    ) %>% 
+  ) %>%
+  unite('yr_site_logger', yr, site, logger, sep = '_', remove = F) %>% 
   st_as_sf(coords = c('long', 'lat'), crs = 4326)
 
 save(metadat, file = here('data/metadat.RData'))
@@ -55,13 +49,13 @@ load(file = here('data/metadat.RData'))
 # logger, site lookup
 lkup <- metadat %>% 
   st_set_geometry(NULL) %>% 
-  select(yr, site, logger) %>% 
+  select(yr_site_logger, yr, site, logger) %>% 
   unique()
 
 datfls <- fls %>% 
   .[!grepl('OTB_TEMP_LOGGER_DATA|DATASHEETS|^Avg', .$name),] 
 
-tempdat <- NULL
+tempdatrw <- NULL
 for(i in 1:nrow(datfls)){
   
   cat(i,'\n')
@@ -69,35 +63,34 @@ for(i in 1:nrow(datfls)){
   id <- datfls[i, ] %>% 
     pull(id)
   
-  logger <- datfls[i, ] %>% 
+  yr_site_logger <- datfls[i, ] %>% 
     pull(name)
   
   out <- read_sheet(id) %>% 
     mutate(
-      logger = logger, 
+      yr_site_logger = yr_site_logger, 
       elapsed = `Date-Time (EDT)` - min(`Date-Time (EDT)`)
     ) %>% 
     filter(elapsed > 3600) # remove first hour
   
   names(out)[grepl('Temp', names(out))] <- 'tempc'
-  tempdat <- bind_rows(tempdat, out)
+  tempdatrw <- bind_rows(tempdatrw, out)
   
 }
 
-tempdat <- tempdat %>% 
+tempdat <- tempdatrw %>% 
   clean_names %>% 
   select(
-    logger, 
+    yr_site_logger, 
     datetime = date_time_edt, 
     tempc
   ) %>% 
   mutate(
     datetime = force_tz(datetime, tzone = 'America/New_York'),
     yr = year(datetime), 
-    logger = gsub(' .*', '', logger), 
-    logger = gsub('2145', '', logger), 
-    logger = gsub('^.*_.*_(.*$)', '\\1', logger)
+    logger = gsub('^.*_.*_(.*$)', '\\1', yr_site_logger),
+    site = gsub('^.*_(.*)_.*$', '\\1', yr_site_logger)
   ) %>% 
-  left_join(lkup, by = c('yr', 'logger'))
+  filter(yr_site_logger %in% lkup$yr_site_logger)
 
 save(tempdat, file = here('data/tempdat.RData'))
