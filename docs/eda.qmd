@@ -1,0 +1,202 @@
+---
+title: "Exploratory data analysis"
+author: 
+   - name: Marcus Beck, <mbeck@tbep.org>, Sheila Scolaro, <sscolaro@tbep.org>
+institute: "Tampa Bay Estuary Program"
+date: "`r Sys.Date()`"
+format:
+  html:
+    theme: cosmo
+    css: styles.css
+    code-tools: 
+      source: https://github.com/tbep-tech/otb-temp/blob/main/docs/eda.qmd
+code-fold: true
+execute:
+  echo: true
+  warning: false
+filters:
+  - lightbox
+  
+lightbox: auto
+---
+
+```{r}
+library(tidyverse)
+library(sf)
+library(mapview)
+library(here)
+library(tbeptools)
+
+load(file = here('data/metadat.RData'))
+load(file = here('data/tempdat.RData'))
+load(file = here('data/otbsub.RData'))
+
+sublevs <- c('NW', 'NE', 'CW', 'CE', 'SW', 'SE')
+
+# remote metadat extra columns
+metastrip <- metadat %>% 
+  select(-site, -logger, -yr) %>% 
+  st_set_geometry(NULL)
+
+# combine temp and meta, remove bartow outlier
+dat <- tempdat %>% 
+  left_join(metastrip, by = 'yr_site_logger') %>% 
+  filter(!site %in% '3SWB3') %>% 
+  # filter(yr == 2023) %>% 
+  mutate(
+    hr = hour(datetime),
+    mo = month(deploy_date), 
+    subseg = substr(site, 2, 3),
+    subseg = factor(subseg, levels = sublevs), 
+    stratum = case_when(
+      stratum == 'GAIN' ~ 'SEAGRASS', 
+      stratum == 'LOSS' ~ 'BARE', 
+      T ~ stratum
+    )
+  )
+
+# baseline data
+bsdat <- epcdata %>% 
+  filter(bay_segment == 'OTB') %>% 
+  filter(yr >= 2004 & yr <= 2018) %>% 
+  # filter(mo %in% dat$mo) %>% 
+  select(
+    epchc_station, 
+    SampleTime, 
+    yr, 
+    mo, 
+    tempc = Temp_Water_Bottom_degC,
+    lat = Latitude, 
+    lon = Longitude
+    ) %>% 
+  st_as_sf(coords = c('lon', 'lat'), remove = F, crs = 4326) %>% 
+  st_intersection(otbsub) %>% 
+  mutate(
+    subseg = factor(subseg, levels = sublevs)
+  )
+```
+
+# Background and questions
+
+This document provides exploratory data analyses for the temperature logger deployments in Old Tampa Bay (OTB).  The graphs herein are meant to provide some quantitative assessments to address the following questions: 
+
+1. Are there differences in temperature at sites where seagrasses were lost compared to where it was gained?  
+1. Are these differences related to location in OTB, such that thermal stress may be higher along a spatial gradient (either along the longitudinal axis or in relation to hydrology as affected by land bridges)?  
+
+The questions follow the general hypothesis that seagrass loss in OTB could partially be explained by thermal stress, where temperature increases in recent years could stress seagrasses beyond their thermal maxima.  I assume there's literature to back this up...
+
+## Confounding factors
+
+The potential confounding effects of the following must be considered if the logger data are to be used to refute or support the hypothesis:
+
+1. Temperature may differ given time of year or preceding weather, such that direct comparisons of data between deployment dates (and years) is not possible
+     * Only compare within deployment dates
+     * Or normalize the data by subtracting the mean temperature for each deployment date
+1. Within and between deployment dates, overall temperature may vary by location.  Although we are concerned that thermal stress may vary spatially, any comparison to historical data must account for natural spatial patterns in temperature in addition to potential recent increases in temperature regardless of location.
+1. Any statistical test must account for temporal correlation in the continuous monitoring data, such that summaries or subsets of the data 
+     * Summary or subsets of the data can be evaluated (e.g, daily maxima)
+     * Or individual time series can be detrended to remove natural diurnal variation (Fourier transform or some other filter)
+
+# Sample locations
+
+This map shows the OTB sub-segments, long-term EPC monitoring stations (red), and sites for the current project (blue). 
+
+```{r}
+tomap1 <- bsdat %>% 
+  select(epchc_station) %>% 
+  unique()
+mapview(otbsub, zcol = NULL, layer.name = 'Sub-segments', col.regions = 'lightblue', homebutton = F, legend = F, map.types = 'CartoDB.Positron') + 
+  mapview(tomap1, alpha = 0, layer.name = 'EPC long-term', homebutton = F, col.regions = 'red', legend = F) + 
+  mapview(metadat, layer.name = 'Current project', homebutton = F)
+```
+
+# Historical patterns
+
+Long-term data from EPC were used to plot the range of values for bottom water temperatures, subset by the OTB sub-segments.  The horizontal lines are the medians and the points are colored by those that are in the same deployment months for the current project and those that are not. These data can be used as comparison with those from the current project. 
+
+```{r}
+toplo <- bsdat %>% 
+  st_set_geometry(NULL) %>% 
+  mutate(
+    tempmed = median(tempc, na.rm = T), 
+    .by  = subseg, 
+    julmo = ifelse(mo %in% unique(dat$mo), 'Deployment\nmonths', 'All other')
+  ) 
+ggplot(toplo, aes(x = subseg, y = tempc, group = subseg)) + 
+  geom_point(aes(fill = julmo), position = position_dodge2(width = 0.4), alpha = 0.8, pch = 21, color  = "#FFFFFF00", size = 3) + 
+  geom_boxplot(aes(y = tempmed, color = tempmed)) + 
+  scale_color_distiller(palette = 'Reds', direction = 1) + 
+  scale_fill_manual(values = c('black', 'green')) + 
+  theme(
+    panel.grid.minor = element_blank(), 
+    panel.grid.major.x = element_blank()
+  ) +
+  labs(
+    x = NULL, 
+    y = 'Bottom temp (C)', 
+    color = 'Median', 
+    fill = 'Month',
+    title = 'EPC 2004-2018 montly bottom temperature'
+  )
+```
+
+# Initial summary graphs
+
+All data for the current project can be viewed in the same plot that shows the individual time series by deployment date, statum, and OTB sub-segement. 
+
+```{r}
+#| fig-width: 8
+#| fig-height: 5
+toplo <- dat %>% 
+  mutate(
+    tempmed = median(tempc, na.rm = T), 
+    .by  = c('subseg', 'deploy_date', 'stratum')
+  ) 
+ggplot(toplo, aes(x = stratum, y = tempc)) + 
+  geom_line(position = position_dodge2(width = 0.7), alpha = 0.8, size = 0.5) + 
+  facet_grid(subseg ~ deploy_date) +
+  geom_boxplot(aes(y = tempmed, color = tempmed)) + 
+  scale_color_distiller(palette = 'Reds', direction = 1) + 
+  scale_fill_manual(values = c('black', 'green')) + 
+  theme(
+    panel.grid.minor = element_blank(), 
+    panel.grid.major.x = element_blank(), 
+    strip.background = element_blank()
+  ) +
+  labs(
+    x = NULL, 
+    y = 'Bottom temp (C)', 
+    color = 'Median', 
+    fill = 'Month',
+    title = 'Deployment data by stratum and OTB sub-segment'
+  )
+```
+
+Additionally, a comparison of the median hourly temperatures for the data summarized by deployment date and stratum shows the diurnal range of values. 
+
+```{r}
+#| fig-width: 8
+#| fig-height: 5
+toplo <- dat %>% 
+  summarise(
+    tempc = median(tempc, na.rm = T), 
+    .by  = c('hr', 'deploy_date', 'stratum')
+  ) 
+ggplot(toplo, aes(x = hr, y = stratum, fill = tempc)) + 
+  geom_tile(color = 'black') + 
+  scale_fill_gradient2(low = 'green', mid = 'yellow', high = 'red', na.value = 'white', midpoint = mean(toplo$tempc)) +
+  scale_x_continuous(expand = c(0, 0), breaks = unique(toplo$hr)) + 
+  scale_y_discrete(expand = c(0, 0)) +
+  facet_grid(deploy_date ~ ., scales = 'free') +
+  theme(
+    strip.background = element_blank()
+  ) + 
+  labs(
+    x = "Hour", 
+    fill = "Median hourly\ntemp (C)", 
+    y = 'Stratum', 
+    title = 'Median hourly temperature by stratum, deployment date'
+  )
+```
+
+Look at maximum daily temperatures...
