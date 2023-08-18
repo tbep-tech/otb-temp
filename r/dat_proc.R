@@ -21,7 +21,7 @@ fls <- drive_ls(gdrive_pth) %>%
 metadat <- fls %>% 
   filter(grepl('OTB_TEMP_LOGGER_DATA', name)) %>% 
   pull(id) %>% 
-  read_sheet(na = c('', 'NA'), col_types = 'DcDcccnnnnnnccccccc') %>% 
+  read_sheet(na = c('', 'NA'), col_types = 'ccDcDcnnnnnncnc') %>% 
   clean_names %>% 
   select(
     deploy_date,

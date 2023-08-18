@@ -81,7 +81,6 @@ mpplo_dd(metadat, ddin)
 
 ### Deploy 2
 
-
 ```{r}
 ddin <- orgs[[4]]
 tsplo_dd(tempdat, ddin)
@@ -97,6 +96,14 @@ mpplo_dd(metadat, ddin)
 ```
 
 Note: 3SWB3 is near the thermal discharge at Bartow Plant
+
+### Deploy 4
+
+```{r}
+ddin <- orgs[[6]]
+tsplo_dd(tempdat, ddin)
+mpplo_dd(metadat, ddin)
+```
 
 :::
 :::
