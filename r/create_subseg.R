@@ -26,4 +26,4 @@ otbsub <- st_split(otbseg, x) %>%
   select(subseg)
 
 st_write(otbsub, here('data/otbsub.shp'))
-save(file = here('data/otbsub.RData'))
+save(otbsub, file = here('data/otbsub.RData'))
