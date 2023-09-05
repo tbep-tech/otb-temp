@@ -105,5 +105,15 @@ tsplo_dd(tempdat, ddin)
 mpplo_dd(metadat, ddin)
 ```
 
+### Deploy 5
+
+```{r}
+ddin <- orgs[[7]]
+tsplo_dd(tempdat, ddin)
+mpplo_dd(metadat, ddin)
+```
+
+Note: Hurricane Idalia passage
+
 :::
 :::
