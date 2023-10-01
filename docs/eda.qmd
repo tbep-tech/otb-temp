@@ -42,7 +42,7 @@ metastrip <- metadat %>%
 dat <- tempdat %>% 
   left_join(metastrip, by = 'yr_site_logger') %>% 
   filter(!site %in% '3SWB3') %>% 
-  # filter(yr == 2023) %>% 
+  filter(yr == 2023) %>%
   mutate(
     hr = hour(datetime),
     mo = month(deploy_date), 
