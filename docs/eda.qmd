@@ -48,6 +48,11 @@ dat <- tempdat %>%
     mo = month(deploy_date), 
     subseg = substr(site, 2, 3),
     subseg = factor(subseg, levels = sublevs), 
+    side = case_when(
+      grepl('W$', subseg) ~ 'West', 
+      grepl('E$', subseg) ~ 'East'
+    ), 
+    side = factor(side, levels = c('West', 'East')),
     stratum = case_when(
       stratum == 'GAIN' ~ 'SEAGRASS', 
       stratum == 'LOSS' ~ 'BARE', 
@@ -200,8 +205,58 @@ ggplot(toplo, aes(x = hr, y = stratum, fill = tempc)) +
   )
 ```
 
-Other ideas:
+```{r}
+#| echo: false
+#| eval: false
 
-* Look at maximum daily temperatures
-* Estimate time per deployment, site when temperature is above threshold
-* Parse by dominant seagrass species
+# scratch
+toplo <- dat %>% 
+  summarise(
+    tempc = median(tempc, na.rm = T), 
+    .by  = c('hr', 'side', 'stratum')
+  ) 
+ggplot(toplo, aes(x = hr, y = stratum, fill = tempc)) + 
+  geom_tile(color = 'black') + 
+  scale_fill_gradient2(low = 'green', mid = 'yellow', high = 'red', na.value = 'white', midpoint = median(toplo$tempc)) +
+  scale_x_continuous(expand = c(0, 0), breaks = unique(toplo$hr)) + 
+  scale_y_discrete(expand = c(0, 0)) +
+  facet_wrap(~side) +
+  theme(
+    strip.background = element_blank()
+  ) + 
+  labs(
+    x = "Hour", 
+    fill = "Median hourly\ntemp (C)", 
+    y = 'Stratum', 
+    title = 'Median hourly temperature by stratum, side'
+  )
+
+
+toplo <- dat %>% 
+  # summarise(
+  #   tempc = mean(tempc, na.rm = T),
+  #   datetime = mean(datetime),
+  #   .by = c('site', 'hr', 'stratum', 'side')
+  # ) %>% 
+  mutate(
+    date = as.Date(datetime),
+    min = minute(datetime) / 60,
+    hrmin = hr + min
+  ) %>% 
+  unite('grp', date, site)
+
+ggplot(toplo, aes(x = hrmin, y = tempc, group = grp)) + 
+  geom_line() + 
+  facet_wrap(side ~ stratum) +
+  theme(
+    strip.background = element_blank()
+  ) + 
+  labs(
+    x = "Hour", 
+    fill = "Hourly\ntemp (C)", 
+    y = 'Stratum', 
+    title = 'Median hourly temperature by stratum, side'
+  )
+
+```
+
