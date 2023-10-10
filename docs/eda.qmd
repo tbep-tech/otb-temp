@@ -27,6 +27,7 @@ library(mapview)
 library(here)
 library(tbeptools)
 library(patchwork)
+library(hrbrthemes)
 
 load(file = here('data/metadat.RData'))
 load(file = here('data/tempdat.RData'))
@@ -269,6 +270,228 @@ p2 <- ggplot(toplo, aes(x = hr, y = stratum, fill = tempc)) +
   )
 
 p1 + p2 + plot_layout(ncol = 1, heights = c(1, 0.5))
+```
 
+A more detailed evaluation of minimum and maximum daily temperatures again shows differences in east vs west locations. Days with incomplete observations were removed from this analysis.
+
+```{r}
+#| fig-width: 8
+#| fig-height: 6
+toplo <- dat %>% 
+  mutate(
+    date = date(datetime),
+    stratum = factor(stratum, levels = c('SEAGRASS', 'BARE'))
+  ) %>% 
+  unite('grp', date, site) %>% 
+  mutate(
+    n = n(), 
+    .by = c('grp')
+  ) %>% 
+  filter(n == 144) %>% 
+  summarise(
+    minv = min(tempc), 
+    maxv = max(tempc), 
+    .by = c(grp, stratum, side)
+  ) %>% 
+  pivot_longer(names_to = 'met', values_to = 'tempc', minv:maxv) %>% 
+  mutate(
+    met = factor(met, levels = c('minv', 'maxv'), labels = c('Minimum', 'Maximum'))
+  )
+
+metcol <- c('dodgerblue', 'tomato1')
+wd <- 1
+p <- ggplot(toplo, aes(x = stratum, y = tempc, fill = met)) +
+  geom_point(aes(color = met), position = position_jitterdodge(dodge.width = wd, jitter.width = 0.2), show.legend = F) +
+  geom_boxplot(position = position_dodge(width = wd), outlier.colour = NA, alpha = 0.5) +
+  scale_color_manual(values = metcol) + 
+  scale_fill_manual(values = metcol) +
+  facet_grid(~side) +
+  theme_bw() +
+  theme(
+    strip.background = element_blank(), 
+    panel.grid.minor = element_blank(), 
+    legend.position = 'top', 
+    strip.text = element_text(size = 12)
+  ) + 
+  labs(
+    y = 'Temp (C)', 
+    x = NULL, 
+    fill = 'Daily temperature'
+  )
+p
+```
+
+This plot shows the estimated differences in the daily minimum or maximum temperatures between seagrass and bare habitats, separated by east/west sides of Old Tampa Bay.
+
+```{r}
+#| fig-width: 7
+#| fig-height: 3
+sidemod <- toplo %>% 
+  group_nest(side) %>% 
+  mutate(
+    mod = purrr::map(data, ~TukeyHSD(aov(tempc ~ met * stratum, data = .x)))
+  )
+
+toplo <- sidemod %>% 
+  mutate(
+    mod = purrr::map(mod, function(x){
+      x$`met:stratum` %>% 
+        data.frame %>% 
+        mutate(
+          comp = row.names(.)
+        )
+    })
+  ) %>% 
+  select(side, mod) %>% 
+  unnest('mod') %>% 
+  filter(comp %in% c("Minimum:BARE-Minimum:SEAGRASS", 
+                     "Maximum:BARE-Maximum:SEAGRASS")
+  ) %>% 
+  mutate(
+    pcol = ifelse(p.adj <= 0.05, 'p < 0.05', 'ns'), 
+    pcol = factor(pcol, levels = c('p < 0.05', 'ns'))
+  ) 
+
+p <- ggplot(toplo, aes(y = comp, x = diff, linetype = pcol, col = side)) + 
+  geom_vline(xintercept = 0, color = 'black', linetype = 'dotted') +
+  geom_point(position = position_dodge(width = 0.3), size = 3) + 
+  geom_errorbar(aes(xmin = lwr, xmax = upr), position = position_dodge(width = 0.3), width = 0.2) + 
+  scale_linetype_manual(values = c('solid', 'dashed'), drop = F) +
+  theme_ipsum(plot_margin = margin(5, 5, 5, 5)) + 
+  theme(
+    strip.placement = 'outside',
+    panel.grid.minor = element_blank(),
+    panel.grid.major.y = element_blank(),
+    strip.background = element_blank(), 
+    axis.title.y = element_blank(), 
+    legend.title = element_blank(), 
+    legend.position = 'top',
+    axis.title.x = element_text(hjust = 0.5),
+    strip.text.x = element_text(hjust = 0.5),
+    strip.text = element_text(size = 9),
+    panel.background = element_rect()
+  ) +
+  labs(
+    x = 'Effect size (C)', 
+    subtitle = '(a) Estimated differences in daily temperatures'
+  )
+p
+```
+
+The same analysis is repeated but the daily temperature summaries are detrended by deployment date.  This potentially reduces the effect of seasonal variation on the results. 
+
+```{r}
+#| fig-width: 8
+#| fig-height: 6
+toplo <- dat %>% 
+  mutate(
+    date = date(datetime),
+    stratum = factor(stratum, levels = c('SEAGRASS', 'BARE'))
+  ) %>% 
+  unite('grp', date, site) %>% 
+  mutate(
+    n = n(), 
+    .by = c('grp')
+  ) %>% 
+  filter(n == 144) %>% 
+  group_nest(deploy_date) %>% 
+  mutate(
+    data = purrr::map(data, function(x){
+      
+      mod <- lm(tempc ~ datetime, x)
+      x$resid <- resid(mod)
+      
+      return(x)
+      
+    })
+  ) %>% 
+  unnest(data) %>% 
+  summarise(
+    minv = min(resid), 
+    maxv = max(resid), 
+    .by = c(grp, stratum, side)
+  ) %>% 
+  pivot_longer(names_to = 'met', values_to = 'tempc', minv:maxv) %>% 
+  mutate(
+    met = factor(met, levels = c('minv', 'maxv'), labels = c('Minimum', 'Maximum'))
+  )
+
+
+metcol <- c('dodgerblue', 'tomato1')
+wd <- 1
+p <- ggplot(toplo, aes(x = stratum, y = tempc, fill = met)) +
+  geom_point(aes(color = met), position = position_jitterdodge(dodge.width = wd, jitter.width = 0.2), show.legend = F) +
+  geom_boxplot(position = position_dodge(width = wd), outlier.colour = NA, alpha = 0.5) +
+  scale_color_manual(values = metcol) + 
+  scale_fill_manual(values = metcol) +
+  facet_grid(~side) +
+  theme_bw() +
+  theme(
+    strip.background = element_blank(), 
+    panel.grid.minor = element_blank(), 
+    legend.position = 'top', 
+    strip.text = element_text(size = 12)
+  ) + 
+  labs(
+    y = 'Detrended temp (C)', 
+    x = NULL, 
+    fill = 'Daily temperature'
+  )
+p
+```
+
+```{r}
+#| fig-width: 7
+#| fig-height: 3
+sidemod <- toplo %>% 
+  group_nest(side) %>% 
+  mutate(
+    mod = purrr::map(data, ~TukeyHSD(aov(tempc ~ met * stratum, data = .x)))
+  )
+
+toplo <- sidemod %>% 
+  mutate(
+    mod = purrr::map(mod, function(x){
+      x$`met:stratum` %>% 
+        data.frame %>% 
+        mutate(
+          comp = row.names(.)
+        )
+    })
+  ) %>% 
+  select(side, mod) %>% 
+  unnest('mod') %>% 
+  filter(comp %in% c("Minimum:BARE-Minimum:SEAGRASS", 
+                     "Maximum:BARE-Maximum:SEAGRASS")
+  ) %>% 
+  mutate(
+    pcol = ifelse(p.adj <= 0.05, 'p < 0.05', 'ns'), 
+    pcol = factor(pcol, levels = c('p < 0.05', 'ns'))
+  ) 
+
+p <- ggplot(toplo, aes(y = comp, x = diff, linetype = pcol, col = side)) + 
+  geom_vline(xintercept = 0, color = 'black', linetype = 'dotted') +
+  geom_point(position = position_dodge(width = 0.3), size = 3) + 
+  geom_errorbar(aes(xmin = lwr, xmax = upr), position = position_dodge(width = 0.3), width = 0.2) + 
+  scale_linetype_manual(values = c('solid', 'dashed'), drop = F) +
+  theme_ipsum(plot_margin = margin(5, 5, 5, 5)) + 
+  theme(
+    strip.placement = 'outside',
+    panel.grid.minor = element_blank(),
+    panel.grid.major.y = element_blank(),
+    strip.background = element_blank(), 
+    axis.title.y = element_blank(), 
+    legend.title = element_blank(), 
+    legend.position = 'top',
+    axis.title.x = element_text(hjust = 0.5),
+    strip.text.x = element_text(hjust = 0.5),
+    strip.text = element_text(size = 9),
+    panel.background = element_rect()
+  ) +
+  labs(
+    x = 'Effect size (C)', 
+    subtitle = '(a) Estimated differences in daily temperatures'
+  )
+p
 ```
 
