@@ -26,6 +26,7 @@ library(sf)
 library(mapview)
 library(here)
 library(tbeptools)
+library(patchwork)
 
 load(file = here('data/metadat.RData'))
 load(file = here('data/tempdat.RData'))
@@ -205,58 +206,69 @@ ggplot(toplo, aes(x = hr, y = stratum, fill = tempc)) +
   )
 ```
 
-```{r}
-#| echo: false
-#| eval: false
+The daily data can also be evaluated relative to western or eastern stations in Old Tampa Bay. 
 
-# scratch
+```{r}
+#| fig-width: 8
+#| fig-height: 7
+toplo <- dat %>% 
+  mutate(
+    date = date(datetime),
+    min = minute(datetime) / 60,
+    hrmin = hr + min,
+    stratum = factor(stratum, levels = c('SEAGRASS', 'BARE'))
+  ) %>% 
+  unite('grp', date, site) %>% 
+  mutate(
+    n = n(), 
+    .by = c('grp')
+  )
+
+p1 <- ggplot(toplo, aes(x = hrmin, y = tempc)) + 
+  geom_line(aes(group = grp), linewidth = 0.25, color = 'grey') + 
+  facet_grid( ~ side) +
+  scale_color_manual(values = c('darkgreen', 'tan2')) +
+  scale_x_continuous(expand = c(0, 0)) +
+  geom_smooth(aes(color = stratum), se = F) +
+  theme_bw() +
+  theme(
+    strip.background = element_blank(), 
+    panel.grid.minor = element_blank(), 
+    legend.position = 'top', 
+    strip.text = element_text(size = 12)
+  ) + 
+  labs(
+    x = "Hour", 
+    y = 'Temp (C)',
+    color = NULL,
+    title = '(a) Daily temperature by stratum, side'
+  )
+
 toplo <- dat %>% 
   summarise(
     tempc = median(tempc, na.rm = T), 
     .by  = c('hr', 'side', 'stratum')
   ) 
-ggplot(toplo, aes(x = hr, y = stratum, fill = tempc)) + 
+p2 <- ggplot(toplo, aes(x = hr, y = stratum, fill = tempc)) + 
   geom_tile(color = 'black') + 
   scale_fill_gradient2(low = 'green', mid = 'yellow', high = 'red', na.value = 'white', midpoint = median(toplo$tempc)) +
   scale_x_continuous(expand = c(0, 0), breaks = unique(toplo$hr)) + 
   scale_y_discrete(expand = c(0, 0)) +
   facet_wrap(~side) +
   theme(
-    strip.background = element_blank()
+    strip.background = element_blank(), 
+    strip.text = element_text(size = 12), 
+    legend.position = 'top', 
+    axis.text.x = element_text(size = 8)
   ) + 
   labs(
     x = "Hour", 
     fill = "Median hourly\ntemp (C)", 
-    y = 'Stratum', 
-    title = 'Median hourly temperature by stratum, side'
+    y = NULL, 
+    title = '(b) Median hourly temperature by stratum, side'
   )
 
-
-toplo <- dat %>% 
-  # summarise(
-  #   tempc = mean(tempc, na.rm = T),
-  #   datetime = mean(datetime),
-  #   .by = c('site', 'hr', 'stratum', 'side')
-  # ) %>% 
-  mutate(
-    date = as.Date(datetime),
-    min = minute(datetime) / 60,
-    hrmin = hr + min
-  ) %>% 
-  unite('grp', date, site)
-
-ggplot(toplo, aes(x = hrmin, y = tempc, group = grp)) + 
-  geom_line() + 
-  facet_wrap(side ~ stratum) +
-  theme(
-    strip.background = element_blank()
-  ) + 
-  labs(
-    x = "Hour", 
-    fill = "Hourly\ntemp (C)", 
-    y = 'Stratum', 
-    title = 'Median hourly temperature by stratum, side'
-  )
+p1 + p2 + plot_layout(ncol = 1, heights = c(1, 0.5))
 
 ```
 
