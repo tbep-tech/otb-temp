@@ -78,32 +78,32 @@ mapview(sg_clip, zcol = 'var', layer.name = 'Seagrass', col.regions = cols)+
   mapview(dem, layer.name = 'Depth (m)')
 
 ##Select a sample stratified by seagrass change area (https://cran.r-project.org/web/packages/spsurvey/vignettes/sampling.html#3_Stratified_sampling)
-stata_n<- c(lost=4)
-strata_eqprob<- grts(sg_clip,n_base = stata_n, stratum_var = "var")
+stata_n_24<- c(lost=50)
+strata_eqprob<- grts(sg_clip,n_base = stata_n_24, stratum_var = "var")
 sp_plot(strata_eqprob)
 
-stata_n_sg<- c(FLUCCSCODE=6)
-strata_eqprob_sg<- grts(sg22_clip,n_base = stata_n_sg)
+stata_n_sg_24<- c(FLUCCSCODE=50)
+strata_eqprob_sg<- grts(sg22_clip,n_base = stata_n_sg_24)
 sp_plot(strata_eqprob_sg)
 
 
 #transform list of sites into a dataframe and project to prj4 for consistency
-Loss_sites<- as.data.frame(strata_eqprob$sites_base)
-write.csv(Loss_sites, "C:\\Users\\sscol\\OneDrive\\Desktop\\Logger\\otb-temp\\data\\loss_sites_2023-2.csv")
-sg_sites<- as.data.frame(strata_eqprob_sg$sites_base)
-write.csv(sg_sites, "C:\\Users\\sscol\\OneDrive\\Desktop\\Logger\\otb-temp\\data\\sg_sites_2023-2.csv")
+Loss_sites_24<- as.data.frame(strata_eqprob$sites_base)
+write.csv(Loss_sites_24, "C:\\Users\\sscol\\OneDrive\\Desktop\\Logger\\otb-temp\\data\\loss_sites_2023-2.csv")
+sg_sites_24<- as.data.frame(strata_eqprob_sg$sites_base)
+write.csv(sg_sites_24, "C:\\Users\\sscol\\OneDrive\\Desktop\\Logger\\otb-temp\\data\\sg_sites_2023-2.csv")
 
 
-Loss_sites_geo<-st_as_sf(Loss_sites,coords = c("lon_WGS84","lat_WGS84"), crs=4326)
-Loss_sites_geo<-Loss_sites_geo %>% st_transform(crs = prj4)
+Loss_sites_geo24<-st_as_sf(Loss_sites_24,coords = c("lon_WGS84","lat_WGS84"), crs=4326)
+Loss_sites_geo24<-Loss_sites_geo24 %>% st_transform(crs = prj4)
 
-sg_sites_geo<-st_as_sf(sg_sites,coords = c("lon_WGS84","lat_WGS84"), crs=4326)
-sg_sites_geo<-sg_sites_geo %>% st_transform(crs = prj4)
+sg_sites_geo24<-st_as_sf(sg_sites_24,coords = c("lon_WGS84","lat_WGS84"), crs=4326)
+sg_sites_geo24<-sg_sites_geo24 %>% st_transform(crs = prj4)
 
 #Generate a map selected sites
-mapview(sg_clip, zcol = 'var', layer.name = 'Seagrass', col.regions = cols)+
-  mapview(Loss_sites_geo, layer.name='loss', color = 'yellow', alpha.regions=0)+
-  mapview(sg_sites_geo, layer.name='SG', color = 'blue', alpha.regions=0)
+mapview(sg_clip, zcol = 'var', layer.name = 'Seagrass', col.regions = Loss_cols)+
+  mapview(Loss_sites_geo24, layer.name='loss', color = 'yellow', alpha.regions=0)+
+  mapview(sg_sites_geo24, layer.name='SG', color = 'blue', alpha.regions=0)
 
 mapview(sg22_clip, zcol = 'FLUCCSCODE', col.regions = cols)+
   mapview(Loss_sites_geo, layer.name='loss', color = 'red', alpha.regions=0)+
