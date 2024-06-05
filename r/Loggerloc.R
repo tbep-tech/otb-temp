@@ -89,9 +89,9 @@ sp_plot(strata_eqprob_sg)
 
 #transform list of sites into a dataframe and project to prj4 for consistency
 Loss_sites_24<- as.data.frame(strata_eqprob$sites_base)
-write.csv(Loss_sites_24, "C:\\Users\\sscol\\OneDrive\\Desktop\\Logger\\otb-temp\\data\\loss_sites_2023-2.csv")
+write.csv(Loss_sites_24, "C:\\Users\\sscol\\OneDrive\\Desktop\\Logger\\otb-temp\\data\\loss_sites_2024.csv")
 sg_sites_24<- as.data.frame(strata_eqprob_sg$sites_base)
-write.csv(sg_sites_24, "C:\\Users\\sscol\\OneDrive\\Desktop\\Logger\\otb-temp\\data\\sg_sites_2023-2.csv")
+write.csv(sg_sites_24, "C:\\Users\\sscol\\OneDrive\\Desktop\\Logger\\otb-temp\\data\\sg_sites_2024.csv")
 
 
 Loss_sites_geo24<-st_as_sf(Loss_sites_24,coords = c("lon_WGS84","lat_WGS84"), crs=4326)
