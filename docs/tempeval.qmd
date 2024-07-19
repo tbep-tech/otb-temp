@@ -123,5 +123,43 @@ tsplo_dd(tempdat, ddin)
 mpplo_dd(metadat, ddin)
 ```
 
+### Deploy 7
+
+```{r}
+ddin <- orgs[[9]]
+tsplo_dd(tempdat, ddin)
+mpplo_dd(metadat, ddin)
+```
+
+:::
+
+## 2024
+
+::: {.panel-tabset}
+
+### Deploy 1
+
+```{r}
+ddin <- orgs[[10]]
+tsplo_dd(tempdat, ddin)
+mpplo_dd(metadat, ddin)
+```
+
+### Deploy 2
+
+```{r}
+ddin <- orgs[[11]]
+tsplo_dd(tempdat, ddin)
+mpplo_dd(metadat, ddin)
+```
+
+### Deploy 3
+
+```{r}
+ddin <- orgs[[12]]
+tsplo_dd(tempdat, ddin)
+mpplo_dd(metadat, ddin)
+```
+
 :::
 :::
