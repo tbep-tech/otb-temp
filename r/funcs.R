@@ -44,6 +44,34 @@ mpplo_dd <- function(metadat, dd){
     
 }
 
+dlmetadat_fun <- function(fl){
+  
+  out <- fls %>% 
+    filter(grepl('OTB_TEMP_LOGGER_DATA', name)) %>% 
+    pull(id) %>% 
+    read_sheet(na = c('', 'NA'), col_types = 'ccDcDcnnnnnncnc') %>% 
+    clean_names %>% 
+    select(
+      deploy_date,
+      logger = logger_id,
+      site = site_id,
+      stratum, 
+      lat, 
+      long, 
+      depthm = depth_m
+    ) %>%
+    filter(!is.na(logger)) %>% 
+    mutate(
+      yr = year(deploy_date), 
+      logger = sprintf('%04d', logger)
+    ) %>%
+    unite('yr_site_logger', yr, site, logger, sep = '_', remove = F) %>% 
+    st_as_sf(coords = c('long', 'lat'), crs = 4326)
+  
+  return(out)
+  
+}
+
 dltempdat_fun <- function(fls, metadat){
   
   flexts <- file.exists(here('data/tempdat.RData'))
