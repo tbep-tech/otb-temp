@@ -9,6 +9,8 @@ library(here)
 drive_deauth()
 gs4_deauth()
 
+source(here('R/funcs.R'))
+
 # gdrive info ---------------------------------------------------------------------------------
 
 gdrive_pth <- 'https://drive.google.com/drive/folders/1MauA87CetbHCl1IcSolrv2Q8HRXoM9NL'
@@ -46,51 +48,6 @@ save(metadat, file = here('data/metadat.RData'))
 
 load(file = here('data/metadat.RData'))
 
-# logger, site lookup
-lkup <- metadat %>% 
-  st_set_geometry(NULL) %>% 
-  select(yr_site_logger, yr, site, logger) %>% 
-  unique()
-
-datfls <- fls %>% 
-  .[!grepl('OTB_TEMP_LOGGER_DATA|DATASHEETS|^Avg', .$name),] 
-
-tempdatrw <- NULL
-for(i in 1:nrow(datfls)){
-  
-  cat(i,'\n')
-  
-  id <- datfls[i, ] %>% 
-    pull(id)
-  
-  yr_site_logger <- datfls[i, ] %>% 
-    pull(name)
-  
-  out <- read_sheet(id) %>% 
-    mutate(
-      yr_site_logger = yr_site_logger, 
-      elapsed = `Date-Time (EDT)` - min(`Date-Time (EDT)`)
-    ) %>% 
-    filter(elapsed > 3600) # remove first hour
-  
-  names(out)[grepl('Temp', names(out))] <- 'tempc'
-  tempdatrw <- bind_rows(tempdatrw, out)
-  
-}
-
-tempdat <- tempdatrw %>% 
-  clean_names %>% 
-  select(
-    yr_site_logger, 
-    datetime = date_time_edt, 
-    tempc
-  ) %>% 
-  mutate(
-    datetime = force_tz(datetime, tzone = 'America/New_York'),
-    yr = year(datetime), 
-    logger = gsub('^.*_.*_(.*$)', '\\1', yr_site_logger),
-    site = gsub('^.*_(.*)_.*$', '\\1', yr_site_logger)
-  ) %>% 
-  filter(yr_site_logger %in% lkup$yr_site_logger)
+tempdat <- dltempdat_fun(fls, metadat)
 
 save(tempdat, file = here('data/tempdat.RData'))
