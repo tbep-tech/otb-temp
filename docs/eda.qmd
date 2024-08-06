@@ -1,5 +1,5 @@
 ---
-title: "Exploratory data analysis"
+title: "Exploratory analysis: 2023 data"
 author: 
    - name: Marcus Beck, <mbeck@tbep.org>, Sheila Scolaro, <sscolaro@tbep.org>
 institute: "Tampa Bay Estuary Program"
@@ -154,7 +154,7 @@ All data for the current project can be viewed in the same plot that shows the i
 
 ```{r}
 #| fig-width: 8
-#| fig-height: 5
+#| fig-height: 6
 toplo <- dat %>% 
   mutate(
     tempmed = median(tempc, na.rm = T), 
@@ -169,7 +169,8 @@ ggplot(toplo, aes(x = stratum, y = tempc)) +
   theme(
     panel.grid.minor = element_blank(), 
     panel.grid.major.x = element_blank(), 
-    strip.background = element_blank()
+    strip.background = element_blank(), 
+    axis.text.x = element_text(angle = 45, hjust = 1)
   ) +
   labs(
     x = NULL, 
@@ -184,7 +185,7 @@ Additionally, a comparison of the median hourly temperatures for the data summar
 
 ```{r}
 #| fig-width: 8
-#| fig-height: 5
+#| fig-height: 6
 toplo <- dat %>% 
   summarise(
     tempc = median(tempc, na.rm = T), 
