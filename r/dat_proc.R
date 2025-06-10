@@ -20,6 +20,7 @@ fls <- drive_ls(gdrive_pth) %>%
 
 # site metadata -------------------------------------------------------------------------------
 
+# may need to step through function
 metadat <- dlmetadat_fun(fls)
 
 save(metadat, file = here('data/metadat.RData'))
@@ -28,6 +29,7 @@ save(metadat, file = here('data/metadat.RData'))
 
 load(file = here('data/metadat.RData'))
 
+# may need to step through function
 tempdat <- dltempdat_fun(fls, metadat)
 
 # remove non-deployment data
@@ -35,3 +37,4 @@ tempdat <- tempdat %>%
   filter(!(yr_site_logger %in% c('2024_4NWB3_7775') & datetime > ymd_hms('2024-07-15 11:11:00', tz = 'America/New_York')))
 
 save(tempdat, file = here('data/tempdat.RData'))
+

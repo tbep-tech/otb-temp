@@ -13,10 +13,6 @@ format:
 execute:
   echo: false
   warning: false
-filters:
-  - lightbox
-  
-lightbox: auto
 ---
 
 ```{r}
@@ -205,6 +201,20 @@ mpplo_dd(metadat, ddin)
 
 ```{r}
 ddin <- orgs[[18]]
+tsplo_dd(tempdat, ddin)
+mpplo_dd(metadat, ddin)
+```
+
+:::
+
+## 2025
+
+::: {.panel-tabset}
+
+### Deploy 1
+
+```{r}
+ddin <- orgs[[19]]
 tsplo_dd(tempdat, ddin)
 mpplo_dd(metadat, ddin)
 ```
