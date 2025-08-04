@@ -86,7 +86,7 @@ dltempdat_fun <- function(fls, metadat){
     .[!grepl('OTB_TEMP_LOGGER_DATA|DATASHEETS|^Avg|calcheck', .$name),] 
     
   if(flexts){
-    browser()
+
     load(file = here('data/tempdat.RData'))
     
     unilog <- tempdat$yr_site_logger %>% 

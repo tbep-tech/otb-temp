@@ -219,5 +219,21 @@ tsplo_dd(tempdat, ddin)
 mpplo_dd(metadat, ddin)
 ```
 
+### Deploy 2
+
+```{r}
+ddin <- orgs[[20]]
+tsplo_dd(tempdat, ddin)
+mpplo_dd(metadat, ddin)
+```
+
+### Deploy 3
+
+```{r}
+ddin <- orgs[[21]]
+tsplo_dd(tempdat, ddin)
+mpplo_dd(metadat, ddin)
+```
+
 :::
 :::
