@@ -1,31 +1,120 @@
 tsplo_dd <- function(tempdat, dd){
   
-  yr_site_logger <- dd
+  # Filter data first
+  toplo <- tempdat |> 
+    filter(yr_site_logger %in% !!dd) |>
+    mutate(datetime_ms = as.numeric(datetime) * 1000)
   
+  # axis range
   rng <- range(tempdat$tempc, na.rm  = T)
+
+  # Calculate average for reference line
+  avev <- mean(toplo$tempc, na.rm = TRUE)
   
-  p <- tempdat %>% 
-    filter(yr_site_logger %in% !!yr_site_logger) %>% 
-    ggplot(aes(x = datetime, y = tempc, color = site)) + 
-    coord_cartesian(ylim = rng) +
-    scale_y_continuous(breaks = seq(round(rng[1], 0), rng[2], by = 2)) +
-    geom_line() + 
-    theme_minimal() + 
-    scale_color_viridis_d() +
-    theme(
-      panel.grid.minor = element_blank(), 
-      legend.position  = 'top'
-    ) +
-    labs(
-      y = 'Temp (C)',
-      x = NULL, 
-      color = 'Site'
-    )
+  # Create base highchart
+  hc <- toplo |>
+    hchart("line", 
+           hcaes(x = datetime_ms, y = tempc, group = site)) |>
+    hc_chart(
+      zoomType = "xy",
+      backgroundColor = "white"  # White background
+    ) |>
+    hc_plotOptions(
+      line = list(
+        marker = list(enabled = FALSE)
+      ),
+      series = list(
+        backgroundColor = "white"  # Ensure plot area is white
+      )
+    ) |>
+    hc_tooltip(
+      pointFormat = "<span style='color:{series.color}'>{series.name}</span>: <b>{point.y:.2f}°C ({point.tempf:.2f}°F)</b><br/>",
+      shared = FALSE,
+      backgroundColor = "white",
+      borderColor = "#ccc",
+      borderRadius = 3,
+      pointFormatter = JS("
+        function() {
+          var tempF = (this.y * 9/5) + 32;
+          return '<span style=\"color:' + this.series.color + '\">' + this.series.name + 
+                 '</span>: <b>' + this.y.toFixed(2) + '°C (' + tempF.toFixed(2) + '°F)</b><br/>';
+        }
+      ")
+    ) |>
+    hc_exporting(
+      enabled = TRUE,
+      chartOptions = list(
+        chart = list(backgroundColor = "white"),  # White background for exports
+        plotOptions = list(
+          series = list(
+            dataLabels = list(
+              style = list(textOutline = "none")
+            )
+          )
+        )
+      ),
+      buttons = list(
+        contextButton = list(
+          menuItems = list(
+            "viewFullscreen",
+            "separator",
+            "downloadPNG",
+            "separator",
+            "downloadCSV"
+          )
+        )
+      )
+    ) |>
+    hc_xAxis(
+      type = "datetime",
+      title = list(text = "")
+    ) |>
+    hc_yAxis(
+      title = list(text = "Temp (C)"), 
+      min = rng[1],
+      max = rng[2]
+    ) |>
+    highcharter::hc_yAxis_multiples(
+      list(
+        title = list(text = "Temp (C)"), 
+        min = rng[1],
+        max = rng[2], 
+        id = 'primary-axis'
+      ),
+      list(
+        title = list(text = "Temp (F)"),
+        id = "secondary-axis",
+        opposite = TRUE,
+        # Link the axes with proper conversion
+        linkedTo = 0,
+        labels = list(
+          formatter = highcharter::JS(
+            "function() {
+              return ((this.value  * 9/5) + 32).toFixed(1);
+            }"
+          )
+        )
+      )
+    ) |> 
+    hc_add_series(
+      data = list(list(x = min(toplo$datetime_ms, na.rm = TRUE), y = avev),
+                  list(x = max(toplo$datetime_ms, na.rm = TRUE), y = avev)),
+      type = "line",
+      name = "Mean",
+      color = "black",
+      dashStyle = "dash",
+      marker = list(enabled = FALSE),
+      enableMouseTracking = FALSE
+    ) |>
+    hc_legend(
+      align = "center", 
+      verticalAlign = "top",
+      symbolHeight = 5 
+    ) |> 
+    hc_colors(viridis::viridis(length(unique(toplo$site))))
   
-  pout <- ggplotly(p)
-  
-  return(pout)
-  
+  return(hc)
+
 }
 
 mpplo_dd <- function(metadat, dd){
