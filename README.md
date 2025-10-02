@@ -5,6 +5,9 @@ Evaluation of the [TBEP Optical Model](https://drive.google.com/file/d/1qaM852mk
 View the temperature data: [link](https://tbep-tech.github.io/otb-temp/tempeval)
 
 EDA:
-    * [2023](https://tbep-tech.github.io/otb-temp/eda2023)
-    * [2024](https://tbep-tech.github.io/otb-temp/eda2024)
-    * [2025](https://tbep-tech.github.io/otb-temp/eda2025)
+
+-   [2023](https://tbep-tech.github.io/otb-temp/eda2023)
+
+-   [2024](https://tbep-tech.github.io/otb-temp/eda2024)
+
+-   [2025](https://tbep-tech.github.io/otb-temp/eda2025)

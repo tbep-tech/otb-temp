@@ -6,10 +6,9 @@ institute: "Tampa Bay Estuary Program"
 date: "`r Sys.Date()`"
 format:
   html:
+    embed-resources: true
     theme: cosmo
     css: styles.css
-    code-tools: 
-      source: https://github.com/tbep-tech/otb-temp/blob/main/docs/eda.qmd
 code-fold: true
 params:
   yr: yr
@@ -43,7 +42,7 @@ metastrip <- metadat %>%
 dat <- tempdat %>% 
   left_join(metastrip, by = 'yr_site_logger') %>% 
   filter(!site %in% '3SWB3') %>% 
-  # filter(yr == 2023) %>%
+  filter(yr != 2022) %>%
   mutate(
     hr = hour(datetime),
     mo = month(deploy_date), 
@@ -187,7 +186,7 @@ Additionally, a comparison of the median hourly temperatures for the data summar
 
 ```{r}
 #| fig-width: 8
-#| fig-height: 6
+#| fig-height: 7
 toplo <- datsub %>% 
   summarise(
     tempc = median(tempc, na.rm = T), 
