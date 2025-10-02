@@ -1,19 +1,19 @@
 library(quarto)
 
+original_wd <- getwd()
+
 for(yr in 2023:2025){
-
+  
+  setwd(here::here('docs'))
+  
   outputfl <- paste0('eda', yr, '.html')
-
-  # render document
+  
   quarto_render(
-    input = here::here('docs', 'edatemplate.qmd'),
+    input = 'edatemplate.qmd',
     execute_params = list(yr = yr),
     output_file = outputfl
   )
-
-  file.rename(
-    from = outputfl, 
-    to = here::here('docs', outputfl)
-  )
-
+  
+  setwd(original_wd)
+  
 }
