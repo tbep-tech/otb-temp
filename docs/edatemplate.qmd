@@ -39,10 +39,10 @@ metastrip <- metadat %>%
   st_set_geometry(NULL)
 
 # combine temp and meta, remove bartow outlier
-dat <- tempdat %>% 
+datsub <- tempdat %>% 
   left_join(metastrip, by = 'yr_site_logger') %>% 
   filter(!site %in% '3SWB3') %>% 
-  filter(yr != 2022) %>%
+  filter(yr %in% params$yr) %>%
   mutate(
     hr = hour(datetime),
     mo = month(deploy_date), 
@@ -106,12 +106,15 @@ The potential confounding effects of the following must be considered if the log
 This map shows the OTB sub-segments, long-term EPC monitoring stations (red), and sites for the current project (blue). 
 
 ```{r}
-tomap1 <- bsdat %>% 
+EPC <- bsdat %>% 
   select(epchc_station) %>% 
-  unique()
-mapview(otbsub, zcol = NULL, layer.name = 'Sub-segments', col.regions = 'lightblue', homebutton = F, legend = F, map.types = 'CartoDB.Positron') + 
-  mapview(tomap1, alpha = 0, layer.name = 'EPC long-term', homebutton = F, col.regions = 'red', legend = F) + 
-  mapview(metadat, layer.name = 'Current project', homebutton = F)
+  unique() %>%
+  mutate(
+    legend_label = 'EPC'
+  )
+mapview(otbsub, zcol = NULL, layer.name = 'Sub-segments', col.regions = 'lightblue', homebutton = F, legend = T, map.types = 'CartoDB.Positron') + 
+  mapview(EPC, homebutton = F, col.regions = 'red', legend = T, alpha = 0) + 
+  mapview(metadat |> filter(yr %in% params$yr), layer.name = paste(params$yr, ' logger data'), homebutton = F)
 ```
 
 ## Historical patterns
@@ -124,7 +127,7 @@ toplo <- bsdat %>%
   mutate(
     tempmed = median(tempc, na.rm = T), 
     .by  = subseg, 
-    julmo = ifelse(mo %in% unique(dat$mo), 'Deployment\nmonths', 'All other')
+    julmo = ifelse(mo %in% unique(datsub$mo), 'Deployment\nmonths', 'All other')
   ) 
 ggplot(toplo, aes(x = subseg, y = tempc, group = subseg)) + 
   geom_point(aes(fill = julmo), position = position_dodge2(width = 0.4), alpha = 0.7, pch = 21, color  = "#FFFFFF00", size = 3) + 
@@ -153,9 +156,6 @@ All data for the current project can be viewed in the same plot that shows the i
 ```{r}
 #| fig-width: 8
 #| fig-height: 6
-datsub <- dat %>%
-  filter(yr == params$yr)
-
 toplo <- datsub %>% 
   mutate(
     tempmed = median(tempc, na.rm = T), 
