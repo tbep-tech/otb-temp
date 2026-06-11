@@ -117,12 +117,16 @@ tsplo_dd <- function(tempdat, dd){
 
 }
 
-mpplo_dd <- function(metadat, dd){
+mpplo_dd <- function(tempdat, metadat, dd){
 
   bnds <- st_bbox(metadat)
 
+  yrsitlog <- tempdat |> 
+    filter(yr_site_logger %in% !!dd) |> 
+    pull(yr_site_logger) |> 
+    unique()
   toplo <- metadat %>%
-    filter(yr_site_logger %in% !!dd)
+    filter(yr_site_logger %in% yrsitlog)
 
   sites <- sort(unique(toplo$site))
   pal <- colorFactor(viridis::viridis(length(sites)), domain = sites)

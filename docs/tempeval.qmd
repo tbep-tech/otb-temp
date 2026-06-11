@@ -50,7 +50,7 @@ orgs <- metadat %>%
 ```{r}
 ddin <- orgs[[1]]
 tsplo_dd(tempdat, ddin)
-mpplo_dd(metadat, ddin)
+mpplo_dd(tempdat, metadat, ddin)
 ```
 
 ### Deploy 2
@@ -58,7 +58,7 @@ mpplo_dd(metadat, ddin)
 ```{r}
 ddin <- orgs[[2]]
 tsplo_dd(tempdat, ddin)
-mpplo_dd(metadat, ddin)
+mpplo_dd(tempdat, metadat, ddin)
 ```
 
 :::
@@ -72,7 +72,7 @@ mpplo_dd(metadat, ddin)
 ```{r}
 ddin <- orgs[[3]]
 tsplo_dd(tempdat, ddin)
-mpplo_dd(metadat, ddin)
+mpplo_dd(tempdat, metadat, ddin)
 ```
 
 ### Deploy 2
@@ -80,7 +80,7 @@ mpplo_dd(metadat, ddin)
 ```{r}
 ddin <- orgs[[4]]
 tsplo_dd(tempdat, ddin)
-mpplo_dd(metadat, ddin)
+mpplo_dd(tempdat, metadat, ddin)
 ```
 
 ### Deploy 3
@@ -88,7 +88,7 @@ mpplo_dd(metadat, ddin)
 ```{r}
 ddin <- orgs[[5]]
 tsplo_dd(tempdat, ddin)
-mpplo_dd(metadat, ddin)
+mpplo_dd(tempdat, metadat, ddin)
 ```
 
 Note: 3SWB3 is near the thermal discharge at Bartow Plant
@@ -98,7 +98,7 @@ Note: 3SWB3 is near the thermal discharge at Bartow Plant
 ```{r}
 ddin <- orgs[[6]]
 tsplo_dd(tempdat, ddin)
-mpplo_dd(metadat, ddin)
+mpplo_dd(tempdat, metadat, ddin)
 ```
 
 ### Deploy 5
@@ -106,7 +106,7 @@ mpplo_dd(metadat, ddin)
 ```{r}
 ddin <- orgs[[7]]
 tsplo_dd(tempdat, ddin)
-mpplo_dd(metadat, ddin)
+mpplo_dd(tempdat, metadat, ddin)
 ```
 
 Note: Hurricane Idalia passage
@@ -116,7 +116,7 @@ Note: Hurricane Idalia passage
 ```{r}
 ddin <- orgs[[8]]
 tsplo_dd(tempdat, ddin)
-mpplo_dd(metadat, ddin)
+mpplo_dd(tempdat, metadat, ddin)
 ```
 
 ### Deploy 7
@@ -124,7 +124,7 @@ mpplo_dd(metadat, ddin)
 ```{r}
 ddin <- orgs[[9]]
 tsplo_dd(tempdat, ddin)
-mpplo_dd(metadat, ddin)
+mpplo_dd(tempdat, metadat, ddin)
 ```
 
 :::
@@ -138,7 +138,7 @@ mpplo_dd(metadat, ddin)
 ```{r}
 ddin <- orgs[[10]]
 tsplo_dd(tempdat, ddin)
-mpplo_dd(metadat, ddin)
+mpplo_dd(tempdat, metadat, ddin)
 ```
 
 ### Deploy 2
@@ -146,7 +146,7 @@ mpplo_dd(metadat, ddin)
 ```{r}
 ddin <- orgs[[11]]
 tsplo_dd(tempdat, ddin)
-mpplo_dd(metadat, ddin)
+mpplo_dd(tempdat, metadat, ddin)
 ```
 
 ### Deploy 3
@@ -154,7 +154,7 @@ mpplo_dd(metadat, ddin)
 ```{r}
 ddin <- orgs[[12]]
 tsplo_dd(tempdat, ddin)
-mpplo_dd(metadat, ddin)
+mpplo_dd(tempdat, metadat, ddin)
 ```
 
 ### Deploy 4
@@ -162,7 +162,7 @@ mpplo_dd(metadat, ddin)
 ```{r}
 ddin <- orgs[[13]]
 tsplo_dd(tempdat, ddin)
-mpplo_dd(metadat, ddin)
+mpplo_dd(tempdat, metadat, ddin)
 ```
 
 ### Deploy 5
@@ -170,7 +170,7 @@ mpplo_dd(metadat, ddin)
 ```{r}
 ddin <- orgs[[14]]
 tsplo_dd(tempdat, ddin)
-mpplo_dd(metadat, ddin)
+mpplo_dd(tempdat, metadat, ddin)
 ```
 
 ### Deploy 6
@@ -178,7 +178,7 @@ mpplo_dd(metadat, ddin)
 ```{r}
 ddin <- orgs[[15]]
 tsplo_dd(tempdat, ddin)
-mpplo_dd(metadat, ddin)
+mpplo_dd(tempdat, metadat, ddin)
 ```
 
 ### Deploy 7
@@ -186,7 +186,7 @@ mpplo_dd(metadat, ddin)
 ```{r}
 ddin <- orgs[[16]]
 tsplo_dd(tempdat, ddin)
-mpplo_dd(metadat, ddin)
+mpplo_dd(tempdat, metadat, ddin)
 ```
 
 ### Deploy 8
@@ -194,7 +194,7 @@ mpplo_dd(metadat, ddin)
 ```{r}
 ddin <- orgs[[17]]
 tsplo_dd(tempdat, ddin)
-mpplo_dd(metadat, ddin)
+mpplo_dd(tempdat, metadat, ddin)
 ```
 
 ### Deploy 9
@@ -202,7 +202,7 @@ mpplo_dd(metadat, ddin)
 ```{r}
 ddin <- orgs[[18]]
 tsplo_dd(tempdat, ddin)
-mpplo_dd(metadat, ddin)
+mpplo_dd(tempdat, metadat, ddin)
 ```
 
 :::
@@ -216,7 +216,7 @@ mpplo_dd(metadat, ddin)
 ```{r}
 ddin <- orgs[[19]]
 tsplo_dd(tempdat, ddin)
-mpplo_dd(metadat, ddin)
+mpplo_dd(tempdat, metadat, ddin)
 ```
 
 ### Deploy 2
@@ -224,7 +224,7 @@ mpplo_dd(metadat, ddin)
 ```{r}
 ddin <- orgs[[20]]
 tsplo_dd(tempdat, ddin)
-mpplo_dd(metadat, ddin)
+mpplo_dd(tempdat, metadat, ddin)
 ```
 
 ### Deploy 3
@@ -232,7 +232,7 @@ mpplo_dd(metadat, ddin)
 ```{r}
 ddin <- orgs[[21]]
 tsplo_dd(tempdat, ddin)
-mpplo_dd(metadat, ddin)
+mpplo_dd(tempdat, metadat, ddin)
 ```
 
 ### Deploy 4
@@ -240,7 +240,7 @@ mpplo_dd(metadat, ddin)
 ```{r}
 ddin <- orgs[[22]]
 tsplo_dd(tempdat, ddin)
-mpplo_dd(metadat, ddin)
+mpplo_dd(tempdat, metadat, ddin)
 ```
 
 ### Deploy 5
@@ -248,7 +248,7 @@ mpplo_dd(metadat, ddin)
 ```{r}
 ddin <- orgs[[23]]
 tsplo_dd(tempdat, ddin)
-mpplo_dd(metadat, ddin)
+mpplo_dd(tempdat, metadat, ddin)
 ```
 
 ### Deploy 6
@@ -256,7 +256,7 @@ mpplo_dd(metadat, ddin)
 ```{r}
 ddin <- orgs[[24]]
 tsplo_dd(tempdat, ddin)
-mpplo_dd(metadat, ddin)
+mpplo_dd(tempdat, metadat, ddin)
 ```
 
 ### Deploy 7
@@ -264,7 +264,7 @@ mpplo_dd(metadat, ddin)
 ```{r}
 ddin <- orgs[[25]]
 tsplo_dd(tempdat, ddin)
-mpplo_dd(metadat, ddin)
+mpplo_dd(tempdat, metadat, ddin)
 ```
 
 ### Deploy 8
@@ -272,7 +272,7 @@ mpplo_dd(metadat, ddin)
 ```{r}
 ddin <- orgs[[26]]
 tsplo_dd(tempdat, ddin)
-mpplo_dd(metadat, ddin)
+mpplo_dd(tempdat, metadat, ddin)
 ```
 
 ### Deploy 9
@@ -280,7 +280,7 @@ mpplo_dd(metadat, ddin)
 ```{r}
 ddin <- orgs[[27]]
 tsplo_dd(tempdat, ddin)
-mpplo_dd(metadat, ddin)
+mpplo_dd(tempdat, metadat, ddin)
 ```
 
 :::
