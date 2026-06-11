@@ -181,12 +181,12 @@ load(file = 'data/dem (1).RData')
 dem[dem[] < -2] <- NA
 
 ##Select a sample stratified by seagrass change area (https://cran.r-project.org/web/packages/spsurvey/vignettes/sampling.html#3_Stratified_sampling)
-stata_loss_25<- c(Loss=50)
-strata_eqprob<- grts(loss_clip,n_base = stata_loss_25)
+stata_loss_26<- c(Loss=50)
+strata_eqprob<- grts(loss_clip,n_base = stata_loss_26)
 sp_plot(strata_eqprob)
 
-stata_n_sg_25<- c(FLUCCSCODE=50)
-strata_eqprob_sg<- grts(sg24_clip,n_base = stata_n_sg_25)
+stata_n_sg_26<- c(FLUCCSCODE=50)
+strata_eqprob_sg<- grts(sg24_clip,n_base = stata_n_sg_26)
 sp_plot(strata_eqprob_sg)
 
                              stata_gain_25<- c(Gain=15)
@@ -194,25 +194,25 @@ sp_plot(strata_eqprob_sg)
                              sp_plot(strata_eqprobgain)
 
 #transform list of sites into a dataframe and project to prj4 for consistency
-Loss_sites_25_update<- as.data.frame(strata_eqprob$sites_base)
-write.csv(Loss_sites_25_update, "C:\\Users\\sscol\\OneDrive\\Desktop\\Logger\\otb-temp\\data\\loss_sites_2025_update.csv")
-sg_sites_25<- as.data.frame(strata_eqprob_sg$sites_base)
-write.csv(sg_sites_25, "C:\\Users\\sscol\\OneDrive\\Desktop\\Logger\\otb-temp\\data\\sg_sites_2025_update.csv")
+Loss_sites_26<- as.data.frame(strata_eqprob$sites_base)
+write.csv(Loss_sites_26, "C:\\Users\\sscol\\OneDrive\\Desktop\\Logger\\otb-temp\\data\\loss_sites_2026.csv")
+sg_sites_26<- as.data.frame(strata_eqprob_sg$sites_base)
+write.csv(sg_sites_26, "C:\\Users\\sscol\\OneDrive\\Desktop\\Logger\\otb-temp\\data\\sg_sites_2026.csv")
 
 gain_sites <- as.data.frame(strata_eqprob$sites_base)
 write.csv(gain_sites, "C:\\Users\\sscol\\OneDrive\\Desktop\\Logger\\otb-temp\\data\\gain_sites_2025.csv")
 
-Loss_sites_geo25<-st_as_sf(Loss_sites_25_update,coords = c("lon_WGS84","lat_WGS84"), crs=4326)
-Loss_sites_geo25<-Loss_sites_geo25 %>% st_transform(crs = prj4)
+Loss_sites_geo26<-st_as_sf(Loss_sites_26,coords = c("lon_WGS84","lat_WGS84"), crs=4326)
+Loss_sites_geo26<-Loss_sites_geo26 %>% st_transform(crs = prj4)
 
-sg_sites_geo25<-st_as_sf(sg_sites_25,coords = c("lon_WGS84","lat_WGS84"), crs=4326)
-sg_sites_geo25<-sg_sites_geo25 %>% st_transform(crs = prj4)
+sg_sites_geo26<-st_as_sf(sg_sites_26,coords = c("lon_WGS84","lat_WGS84"), crs=4326)
+sg_sites_geo26<-sg_sites_geo26 %>% st_transform(crs = prj4)
 
 #Generate a map selected sites
 mapview(sg24_clip, zcol = 'FLUCCS_Cod', col.regions = sg_cols)+
-  mapview(Loss_sites_geo25, layer.name='loss', color = 'yellow', alpha.regions=0)+
-  mapview(sg_sites_geo25, layer.name='SG', color = 'blue', alpha.regions=0)
+  mapview(Loss_sites_geo26, layer.name='loss', color = 'yellow', alpha.regions=0)+
+  mapview(sg_sites_geo26, layer.name='SG', color = 'blue', alpha.regions=0)
 
 mapview(Loss24, zcol = 'Change', col.regions = Loss_cols)+
-  mapview(Loss_sites_geo25, layer.name='Loss', color = 'yellow', alpha.regions=0)+
-  mapview(sg_sites_geo25, layer.name='SG', color = 'blue', alpha.regions=0)
+  mapview(Loss_sites_geo26, layer.name='Loss', color = 'yellow', alpha.regions=0)+
+  mapview(sg_sites_geo26, layer.name='SG', color = 'blue', alpha.regions=0)
