@@ -36,7 +36,7 @@ View the logger web page: [link](https://tbep-tech.github.io/otb-temp/tempeval)
 
 1. In your IDE, source the file `R/dat_proc.R` or run it line by line.
 
-1. Add the markdown text and R code chunk to the bottom of `docs/tempeval.qmd` for the appropriate year and deployment. Number the header for the deployments sequentially for each year and increase the counter for the `ddin` by 1.  For example, the first 2026 deployment content will look like this, starting with "1" for the first deployment and increasing the counter for `ddin` regardless of year:
+1. Add the markdown text and R code near the bottom of `docs/tempeval.qmd` for the appropriate year and deployment. Number the header for the deployments sequentially for each year and increase the counter for the `ddin` by 1.  For example, the first 2026 deployment content will look like this, starting with "1" for the first deployment and increasing the counter for `ddin` regardless of year:
 
    ````
    ### Deploy 1
