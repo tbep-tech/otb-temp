@@ -44,11 +44,11 @@ View the logger web page: [link](https://tbep-tech.github.io/otb-temp/tempeval)
    ```{{r}}
    ddin <- orgs[[28]]
    tsplo_dd(tempdat, ddin)
-   mpplo_dd(metadat, ddin)
+   mpplo_dd(tempdat, metadat, ddin)
    ```   
    ````
 
-1. Render the quarto file `docs/tempeval.qmd` to create the HTML web page.  Do this in your IDE or from the terminal: 
+1. Render the quarto file `docs/tempeval.qmd` to create the HTML web page.  This will take a minute or two. Do this in your IDE or from the terminal: 
 
    ```cmd
    quarto render docs/tempeval.qmd --to html
@@ -67,7 +67,7 @@ View the logger web page: [link](https://tbep-tech.github.io/otb-temp/tempeval)
    git push origin main
    ```
 
-1. The updated Quarto file should be online in a minute or two.  Make sure to view the data for accuracy and completeness.
+1. The updated Quarto file should be online shortly after pushing.  Make sure to view the data for accuracy and completeness.
 
 ## EDA links
 
