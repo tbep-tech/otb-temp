@@ -118,19 +118,50 @@ tsplo_dd <- function(tempdat, dd){
 }
 
 mpplo_dd <- function(metadat, dd){
-  
-  yr_site_logger <- dd
 
   bnds <- st_bbox(metadat)
-  
-  mout <- metadat %>% 
-    filter(yr_site_logger %in% !!yr_site_logger) %>% 
-    mapview(zcol = 'site', layer.name = 'Site') %>% 
-    .@map %>% 
-    fitBounds(lng1 = bnds[[1]], lat1 = bnds[[2]], lng2 = bnds[[3]], lat2 = bnds[[4]])
-  
+
+  toplo <- metadat %>%
+    filter(yr_site_logger %in% !!dd)
+
+  sites <- sort(unique(toplo$site))
+  pal <- colorFactor(viridis::viridis(length(sites)), domain = sites)
+
+  mout <- leaflet(toplo) %>%
+    addProviderTiles(providers$CartoDB.Positron,  group = "CartoDB.Positron") %>%
+    addProviderTiles(providers$CartoDB.DarkMatter, group = "CartoDB.DarkMatter") %>%
+    addProviderTiles(providers$OpenStreetMap,       group = "OpenStreetMap") %>%
+    addProviderTiles(providers$Esri.WorldImagery,  group = "Esri.WorldImagery") %>%
+    addProviderTiles(providers$OpenTopoMap,         group = "OpenTopoMap") %>%
+    addCircleMarkers(
+      color = ~pal(site),
+      fillColor = ~pal(site),
+      fillOpacity = 1,
+      opacity = 1,
+      radius = 6,
+      label = ~site,
+      group = "Site"
+    ) %>%
+    addLegend(
+      position = "topright",
+      pal = pal,
+      values = ~site,
+      title = "Site",
+      opacity = 1
+    ) %>%
+    addLayersControl(
+      baseGroups = c("CartoDB.Positron", "CartoDB.DarkMatter", "OpenStreetMap",
+                     "Esri.WorldImagery", "OpenTopoMap"),
+      overlayGroups = "Site",
+      options = layersControlOptions(collapsed = TRUE)
+    ) %>%
+    fitBounds(
+      lng1 = bnds[[1]], lat1 = bnds[[2]],
+      lng2 = bnds[[3]], lat2 = bnds[[4]]
+    )
+
   return(mout)
-    
+
 }
 
 dlmetadat_fun <- function(fl){

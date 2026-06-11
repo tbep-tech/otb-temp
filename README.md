@@ -20,7 +20,7 @@ View the logger web page: [link](https://tbep-tech.github.io/otb-temp/tempeval)
 1. Open the repository in your IDE. In R, make sure you have the required packages installed:
 
    ```r
-   install.packages(c("tidyverse", "googlesheets4", "googledrive", "janitor", "lubridate", "sf", "here", "knitr", "leaflet", "highcharter"))
+   install.packages(c("tidyverse", "googlesheets4", "googledrive", "janitor", "lubridate", "sf", "here", "knitr", "leaflet", "highcharter", "viridis"))
    ```
 
 1. Make sure you have Quarto installed, see instructions [here](https://quarto.org/docs/get-started/).

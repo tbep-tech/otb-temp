@@ -21,9 +21,9 @@ library(knitr)
 library(here)
 library(tidyverse)
 library(sf)
-library(mapview)
 library(leaflet)
 library(highcharter)
+library(viridis)
 
 load(file = here('data/metadat.RData'))
 load(file = here('data/tempdat.RData'))
@@ -282,6 +282,13 @@ ddin <- orgs[[27]]
 tsplo_dd(tempdat, ddin)
 mpplo_dd(metadat, ddin)
 ```
+
+:::
+
+## 2026
+
+::: {.panel-tabset}
+
 
 :::
 :::
