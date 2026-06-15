@@ -286,9 +286,14 @@ mpplo_dd(tempdat, metadat, ddin)
 :::
 
 ## 2026
-
 ::: {.panel-tabset}
 
+### Deploy 1
 
-:::
+```{r}
+ddin <- orgs[[28]]
+tsplo_dd(tempdat, ddin)
+mpplo_dd(tempdat, metadat, ddin)
+```
+
 :::
