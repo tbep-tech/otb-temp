@@ -296,8 +296,6 @@ tsplo_dd(tempdat, ddin)
 mpplo_dd(tempdat, metadat, ddin)
 ```
 
-:::
-
 ### Deploy 2
 
 ```{r}
@@ -305,5 +303,3 @@ ddin <- orgs[[29]]
 tsplo_dd(tempdat, ddin)
 mpplo_dd(tempdat, metadat, ddin)
 ```
-
-:::

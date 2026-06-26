@@ -1,0 +1,306 @@
+---
+title: "OTB temperature logger deployments"
+author: 
+   - name: Sheila Scolaro, <sscolaro@tbep.org>, Marcus Beck, <mbeck@tbep.org>
+institute: "Tampa Bay Estuary Program"
+date: "`r Sys.Date()`"
+format:
+  html:
+    theme: cosmo
+    css: styles.css
+    code-tools: 
+      source: https://github.com/tbep-tech/otb-temp/blob/main/docs/tempeval.qmd
+execute:
+  echo: false
+  warning: false
+---
+
+```{r}
+#| include: false
+library(knitr)
+library(here)
+library(tidyverse)
+library(sf)
+library(leaflet)
+library(highcharter)
+library(viridis)
+
+load(file = here('data/metadat.RData'))
+load(file = here('data/tempdat.RData'))
+
+source(here('r/funcs.R'))
+
+orgs <- metadat %>% 
+  st_set_geometry(NULL) %>% 
+  select(deploy_date, yr_site_logger) %>% 
+  nest(.by = deploy_date) %>% 
+  arrange(deploy_date) %>% 
+  deframe() %>% 
+  lapply(function(x) x$yr_site_logger)
+```
+
+::: {.panel-tabset}
+
+## 2022
+
+::: {.panel-tabset}
+
+### Deploy 1
+
+```{r}
+ddin <- orgs[[1]]
+tsplo_dd(tempdat, ddin)
+mpplo_dd(tempdat, metadat, ddin)
+```
+
+### Deploy 2
+
+```{r}
+ddin <- orgs[[2]]
+tsplo_dd(tempdat, ddin)
+mpplo_dd(tempdat, metadat, ddin)
+```
+
+:::
+
+## 2023
+
+::: {.panel-tabset}
+
+### Deploy 1
+
+```{r}
+ddin <- orgs[[3]]
+tsplo_dd(tempdat, ddin)
+mpplo_dd(tempdat, metadat, ddin)
+```
+
+### Deploy 2
+
+```{r}
+ddin <- orgs[[4]]
+tsplo_dd(tempdat, ddin)
+mpplo_dd(tempdat, metadat, ddin)
+```
+
+### Deploy 3
+
+```{r}
+ddin <- orgs[[5]]
+tsplo_dd(tempdat, ddin)
+mpplo_dd(tempdat, metadat, ddin)
+```
+
+Note: 3SWB3 is near the thermal discharge at Bartow Plant
+
+### Deploy 4
+
+```{r}
+ddin <- orgs[[6]]
+tsplo_dd(tempdat, ddin)
+mpplo_dd(tempdat, metadat, ddin)
+```
+
+### Deploy 5
+
+```{r}
+ddin <- orgs[[7]]
+tsplo_dd(tempdat, ddin)
+mpplo_dd(tempdat, metadat, ddin)
+```
+
+Note: Hurricane Idalia passage
+
+### Deploy 6
+
+```{r}
+ddin <- orgs[[8]]
+tsplo_dd(tempdat, ddin)
+mpplo_dd(tempdat, metadat, ddin)
+```
+
+### Deploy 7
+
+```{r}
+ddin <- orgs[[9]]
+tsplo_dd(tempdat, ddin)
+mpplo_dd(tempdat, metadat, ddin)
+```
+
+:::
+
+## 2024
+
+::: {.panel-tabset}
+
+### Deploy 1
+
+```{r}
+ddin <- orgs[[10]]
+tsplo_dd(tempdat, ddin)
+mpplo_dd(tempdat, metadat, ddin)
+```
+
+### Deploy 2
+
+```{r}
+ddin <- orgs[[11]]
+tsplo_dd(tempdat, ddin)
+mpplo_dd(tempdat, metadat, ddin)
+```
+
+### Deploy 3
+
+```{r}
+ddin <- orgs[[12]]
+tsplo_dd(tempdat, ddin)
+mpplo_dd(tempdat, metadat, ddin)
+```
+
+### Deploy 4
+
+```{r}
+ddin <- orgs[[13]]
+tsplo_dd(tempdat, ddin)
+mpplo_dd(tempdat, metadat, ddin)
+```
+
+### Deploy 5
+
+```{r}
+ddin <- orgs[[14]]
+tsplo_dd(tempdat, ddin)
+mpplo_dd(tempdat, metadat, ddin)
+```
+
+### Deploy 6
+
+```{r}
+ddin <- orgs[[15]]
+tsplo_dd(tempdat, ddin)
+mpplo_dd(tempdat, metadat, ddin)
+```
+
+### Deploy 7
+
+```{r}
+ddin <- orgs[[16]]
+tsplo_dd(tempdat, ddin)
+mpplo_dd(tempdat, metadat, ddin)
+```
+
+### Deploy 8
+
+```{r}
+ddin <- orgs[[17]]
+tsplo_dd(tempdat, ddin)
+mpplo_dd(tempdat, metadat, ddin)
+```
+
+### Deploy 9
+
+```{r}
+ddin <- orgs[[18]]
+tsplo_dd(tempdat, ddin)
+mpplo_dd(tempdat, metadat, ddin)
+```
+
+:::
+
+## 2025
+
+::: {.panel-tabset}
+
+### Deploy 1
+
+```{r}
+ddin <- orgs[[19]]
+tsplo_dd(tempdat, ddin)
+mpplo_dd(tempdat, metadat, ddin)
+```
+
+### Deploy 2
+
+```{r}
+ddin <- orgs[[20]]
+tsplo_dd(tempdat, ddin)
+mpplo_dd(tempdat, metadat, ddin)
+```
+
+### Deploy 3
+
+```{r}
+ddin <- orgs[[21]]
+tsplo_dd(tempdat, ddin)
+mpplo_dd(tempdat, metadat, ddin)
+```
+
+### Deploy 4
+
+```{r}
+ddin <- orgs[[22]]
+tsplo_dd(tempdat, ddin)
+mpplo_dd(tempdat, metadat, ddin)
+```
+
+### Deploy 5
+
+```{r}
+ddin <- orgs[[23]]
+tsplo_dd(tempdat, ddin)
+mpplo_dd(tempdat, metadat, ddin)
+```
+
+### Deploy 6
+
+```{r}
+ddin <- orgs[[24]]
+tsplo_dd(tempdat, ddin)
+mpplo_dd(tempdat, metadat, ddin)
+```
+
+### Deploy 7
+
+```{r}
+ddin <- orgs[[25]]
+tsplo_dd(tempdat, ddin)
+mpplo_dd(tempdat, metadat, ddin)
+```
+
+### Deploy 8
+
+```{r}
+ddin <- orgs[[26]]
+tsplo_dd(tempdat, ddin)
+mpplo_dd(tempdat, metadat, ddin)
+```
+
+### Deploy 9
+
+```{r}
+ddin <- orgs[[27]]
+tsplo_dd(tempdat, ddin)
+mpplo_dd(tempdat, metadat, ddin)
+```
+
+:::
+
+## 2026
+::: {.panel-tabset}
+
+### Deploy 1
+
+```{r}
+ddin <- orgs[[28]]
+tsplo_dd(tempdat, ddin)
+mpplo_dd(tempdat, metadat, ddin)
+```
+
+### Deploy 2
+
+```{r}
+ddin <- orgs[[29]]
+tsplo_dd(tempdat, ddin)
+mpplo_dd(tempdat, metadat, ddin)
+```
+
