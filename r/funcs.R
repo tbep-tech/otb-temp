@@ -212,8 +212,12 @@ dltempdat_fun <- function(fls, metadat){
   if(flexts){
 
     load(file = here('data/tempdat.RData'))
-    
-    unilog <- tempdat$yr_site_logger %>% 
+
+    # remove records whose source file no longer exists on Google Drive
+    tempdat <- tempdat %>%
+      filter(yr_site_logger %in% datfls$name)
+
+    unilog <- tempdat$yr_site_logger %>%
       unique()
 
     datfls <- datfls %>% 
