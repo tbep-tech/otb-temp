@@ -132,8 +132,7 @@ mpplo_dd <- function(tempdat, metadat, dd){
   pal <- colorFactor(viridis::viridis(length(sites)), domain = sites)
 
   mout <- leaflet(toplo) %>%
-    addProviderTiles(providers$CartoDB.Positron,  group = "CartoDB.Positron") %>%
-    addProviderTiles(providers$CartoDB.DarkMatter, group = "CartoDB.DarkMatter") %>%
+    addProviderTiles(providers$Esri.WorldGrayCanvas,  group = "Esri.WorldGrayCanvas") %>%
     addProviderTiles(providers$OpenStreetMap,       group = "OpenStreetMap") %>%
     addProviderTiles(providers$Esri.WorldImagery,  group = "Esri.WorldImagery") %>%
     addProviderTiles(providers$OpenTopoMap,         group = "OpenTopoMap") %>%
@@ -154,7 +153,7 @@ mpplo_dd <- function(tempdat, metadat, dd){
       opacity = 1
     ) %>%
     addLayersControl(
-      baseGroups = c("CartoDB.Positron", "CartoDB.DarkMatter", "OpenStreetMap",
+      baseGroups = c("Esri.WorldGrayCanvas", "OpenStreetMap",
                      "Esri.WorldImagery", "OpenTopoMap"),
       overlayGroups = "Site",
       options = layersControlOptions(collapsed = TRUE)

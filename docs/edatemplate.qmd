@@ -112,7 +112,7 @@ EPC <- bsdat %>%
   mutate(
     legend_label = 'EPC'
   )
-mapview(otbsub, zcol = NULL, layer.name = 'Sub-segments', col.regions = 'lightblue', homebutton = F, legend = T, map.types = 'CartoDB.Positron') + 
+mapview(otbsub, zcol = NULL, layer.name = 'Sub-segments', col.regions = 'lightblue', homebutton = F, legend = T, map.types = 'Esri.WorldGrayCanvas') + 
   mapview(EPC, homebutton = F, col.regions = 'red', legend = T, alpha = 0) + 
   mapview(metadat |> filter(yr %in% params$yr), layer.name = paste(params$yr, ' logger data'), homebutton = F)
 ```
